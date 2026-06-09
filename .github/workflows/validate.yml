@@ -1,0 +1,120 @@
+name: Validate Build Configuration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-config:
+    runs-on: ubuntu-latest
+    name: Validate live-build config
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files exist
+        run: |
+          echo "Checking required build files..."
+          for f in auto/config auto/build auto/clean Dockerfile.build Makefile scripts/build.sh scripts/fetch-kernel.sh versions.lock; do
+            if [ ! -f "$f" ]; then
+              echo "ERROR: Missing required file: $f"
+              exit 1
+            fi
+            echo "  OK: $f"
+          done
+
+      - name: Validate auto/config syntax
+        run: |
+          bash -n auto/config
+          echo "auto/config syntax OK"
+
+      - name: Validate hook scripts
+        run: |
+          ERRORS=0
+          for hook in config/hooks/live/*.hook.chroot; do
+            if [ -L "$hook" ]; then
+              TARGET=$(readlink -f "$hook")
+              if [ ! -f "$TARGET" ]; then
+                echo "WARN: Broken symlink: $hook -> $TARGET"
+                continue
+              fi
+            fi
+            if ! bash -n "$hook" 2>/dev/null; then
+              echo "ERROR: Syntax error in $hook"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "  OK: $(basename $hook)"
+            fi
+          done
+          exit $ERRORS
+
+      - name: Validate build scripts
+        run: |
+          ERRORS=0
+          for script in scripts/*.sh; do
+            if ! bash -n "$script" 2>/dev/null; then
+              echo "ERROR: Syntax error in $script"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "  OK: $(basename $script)"
+            fi
+          done
+          exit $ERRORS
+
+      - name: Validate package lists
+        run: |
+          ERRORS=0
+          for list in config/package-lists/*.list.chroot; do
+            if [ ! -f "$list" ]; then
+              continue
+            fi
+            PKG_COUNT=$(grep -vE '^\s*#|^\s*$' "$list" | wc -l)
+            if [ "$PKG_COUNT" -eq 0 ]; then
+              echo "WARN: Empty package list: $(basename $list)"
+            else
+              echo "  OK: $(basename $list) ($PKG_COUNT packages)"
+            fi
+          done
+
+      - name: Check os-release fields
+        run: |
+          for field in NAME VERSION ID ID_LIKE PRETTY_NAME VERSION_ID; do
+            if ! grep -q "^${field}=" config/includes.chroot/etc/os-release; then
+              echo "ERROR: Missing field in os-release: $field"
+              exit 1
+            fi
+          done
+          echo "os-release OK"
+          cat config/includes.chroot/etc/os-release
+
+      - name: Check .gitignore covers build artifacts
+        run: |
+          for pattern in "*.iso" "binary/" "chroot/" "cache/" ".build/" "qemu-storage/"; do
+            if ! grep -q "$pattern" .gitignore; then
+              echo "WARN: .gitignore may be missing pattern: $pattern"
+            fi
+          done
+          echo ".gitignore check complete"
+
+  docker-build-test:
+    runs-on: ubuntu-latest
+    name: Docker build image test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t zen-os-build:test -f Dockerfile.build .
+
+      - name: Verify build dependencies
+        run: |
+          docker run --rm zen-os-build:test bash -c "
+            set -e
+            echo 'Checking build dependencies...'
+            which lb && echo '  OK: live-build'
+            which debootstrap && echo '  OK: debootstrap'
+            which xorriso && echo '  OK: xorriso'
+            which mksquashfs && echo '  OK: squashfs-tools'
+            which grub-mkimage && echo '  OK: grub'
+            echo 'All build dependencies present.'
+          "

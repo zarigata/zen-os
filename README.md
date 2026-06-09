@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="wallpapers/ChatGPT%20Image%20May%209%2C%202026%2C%2003_46_16%20AM%20(1).png" alt="ZEN-OS Logo" width="180"/>
+  <img src="assets/logo.png" alt="ZEN-OS Logo" width="180"/>
 </p>
 
 <h1 align="center">ZEN-OS</h1>
@@ -68,7 +68,7 @@ No post-install tinkering. Boot it. Game on it. Build on it.
 
 ## Download
 
-See [Releases](https://github.com/zen-os/zen-os/releases) for the latest ISO.
+See [Releases](https://github.com/zarigata/zen-os/releases) for the latest ISO.
 
 ```bash
 # Verify the download
@@ -99,7 +99,7 @@ ZEN-OS uses [live-build](https://live-team.pages.debian.net/live-manual/) to con
 ### Quick Build
 
 ```bash
-git clone https://github.com/zen-os/zen-os.git
+git clone https://github.com/zarigata/zen-os.git
 cd zen-os
 make build
 ```
