@@ -25,6 +25,8 @@ ZEN-OS is a custom Debian-based Linux distribution designed from the ground up f
 
 No post-install tinkering. Boot it. Game on it. Build on it.
 
+**[Build it yourself in 3 commands →](BUILD.md)**
+
 ### Design Principles
 
 - **Batteries included** — Gaming stack, engineering tools, codecs, and firmware pre-installed
