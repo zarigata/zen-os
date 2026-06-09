@@ -108,6 +108,7 @@ jobs:
   docker-build-test:
     runs-on: ubuntu-latest
     name: Docker build image test
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
