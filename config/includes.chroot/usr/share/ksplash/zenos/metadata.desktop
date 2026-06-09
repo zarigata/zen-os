@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=ZEN-OS
+Description=ZEN-OS Splash Screen
+Version=1.0
+Author=ZEN-OS Project
+Type=Service
+X-KDE-ServiceTypes=KSQmlTheme
+X-KDE-PluginInfo-Name=zenos
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Author=ZEN-OS Project
+X-KDE-PluginInfo-License=GPL-3.0

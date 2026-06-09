@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZEN-OS — Game. Build. Create.</title>
+    <meta name="description" content="A Debian-based Linux distribution built for engineering & gaming. KDE Plasma, Liquorix kernel, full Vulkan/Wine stack, and professional engineering tools — all pre-installed.">
+    <meta name="theme-color" content="#0a1620">
+    <meta property="og:title" content="ZEN-OS — Game. Build. Create.">
+    <meta property="og:description" content="Debian-based Linux for engineers and gamers. Boot it. Game on it. Build on it.">
+    <meta property="og:image" content="assets/banner.png">
+    <meta property="og:type" content="website">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-brand">
+                <img src="assets/logo.png" alt="ZEN-OS" class="nav-logo">
+                <span>ZEN-OS</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#desktop">Desktop</a>
+                <a href="#download">Download</a>
+                <a href="#build">Build</a>
+                <a href="https://github.com/zarigata/zen-os" target="_blank" rel="noopener" class="nav-gh">
+                    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+            <div class="hero-badge">v1.0.0-alpha · Debian Trixie</div>
+            <h1>
+                <span class="hero-title-line">Built for engineers.</span>
+                <span class="hero-title-line">Tuned for gaming.</span>
+                <span class="hero-title-line accent">Powered by Debian.</span>
+            </h1>
+            <p class="hero-sub">
+                A custom Linux distribution with gaming-tuned Liquorix kernel, full Vulkan/DXVK/Wine stack,
+                professional engineering tools, and a cohesive custom theme.
+                <strong>No post-install tinkering.</strong>
+            </p>
+            <div class="hero-actions">
+                <a href="https://github.com/zarigata/zen-os/releases" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    Download ISO
+                </a>
+                <a href="https://github.com/zarigata/zen-os" class="btn btn-secondary">
+                    View Source
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-value">3.4 GB</span>
+                    <span class="stat-label">ISO Size</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-value">200+</span>
+                    <span class="stat-label">Packages</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-value">AMD64</span>
+                    <span class="stat-label">Architecture</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-value">GPL-3.0</span>
+                    <span class="stat-label">License</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Features</span>
+                <h2>Batteries Included</h2>
+                <p>Everything you need to game and build — pre-installed and pre-configured.</p>
+            </div>
+            <div class="grid grid-3">
+                <div class="card">
+                    <div class="card-icon">🎮</div>
+                    <h3>Gaming Stack</h3>
+                    <p>Steam, Wine 10.0, DXVK, MangoHud, GameMode, vkBasalt, Gamescope. Proton-ready out of the box.</p>
+                    <div class="card-tags">
+                        <span>Steam</span><span>Wine</span><span>DXVK</span><span>Proton</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔧</div>
+                    <h3>Engineering Tools</h3>
+                    <p>FreeCAD, KiCad, OpenSCAD, GNU Radio, Octave, Jupyter. CAD, EDA, and simulation ready.</p>
+                    <div class="card-tags">
+                        <span>FreeCAD</span><span>KiCad</span><span>Octave</span><span>Docker</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Liquorix Kernel</h3>
+                    <p>Gaming-tuned kernel with low-latency scheduler, custom CPU governor, and transparent hugepage optimization.</p>
+                    <div class="card-tags">
+                        <span>7.0.5</span><span>Low-latency</span><span>ZEN-tuned</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎨</div>
+                    <h3>Custom Theme</h3>
+                    <p>Cohesive teal-on-dark theme across GRUB, Plymouth, SDDM, and KDE Plasma. Webcore-inspired aesthetic.</p>
+                    <div class="card-tags">
+                        <span>GRUB</span><span>Plymouth</span><span>SDDM</span><span>Plasma</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔒</div>
+                    <h3>Pragmatic Security</h3>
+                    <p>AppArmor + UFW firewall + unattended security upgrades + SSH hardening. Not a fortress, not a free-for-all.</p>
+                    <div class="card-tags">
+                        <span>AppArmor</span><span>UFW</span><span>Auto-updates</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🕹️</div>
+                    <h3>Handheld Ready</h3>
+                    <p>Steam Deck, ROG Ally, Legion Go support with controller udev rules, TDP control, and Big Picture mode.</p>
+                    <div class="card-tags">
+                        <span>Steam Deck</span><span>ROG Ally</span><span>Gamescope</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Desktop -->
+    <section id="desktop" class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Desktop</span>
+                <h2>KDE Plasma, Your Way</h2>
+                <p>ZEN-OS ships KDE Plasma with a custom teal dark theme, Wayland by default, and a first-boot wizard that sets everything up.</p>
+            </div>
+            <div class="desktop-grid">
+                <div class="desktop-feature">
+                    <div class="desktop-feature-icon">🖥️</div>
+                    <div>
+                        <h4>Wayland First</h4>
+                        <p>Plasma Wayland session with X11 fallback. VRR, fractional scaling, and tear-free compositing.</p>
+                    </div>
+                </div>
+                <div class="desktop-feature">
+                    <div class="desktop-feature-icon">🔊</div>
+                    <div>
+                        <h4>Low-Latency Audio</h4>
+                        <p>PipeWire + WirePlumber with gaming-optimized quantum (256/48kHz = 5.3ms). GameMode drops to 2.7ms.</p>
+                    </div>
+                </div>
+                <div class="desktop-feature">
+                    <div class="desktop-feature-icon">🎯</div>
+                    <div>
+                        <h4>First-Boot Wizard</h4>
+                        <p>PyQt5 GUI detects GPU, installs NVIDIA drivers, sets performance profile, and installs apps via Flatpak.</p>
+                    </div>
+                </div>
+                <div class="desktop-feature">
+                    <div class="desktop-feature-icon">⚡</div>
+                    <div>
+                        <h4>Performance Profiles</h4>
+                        <p>One-click Gaming / Balanced / Battery profiles that tune CPU governor, sysctl, GameMode, and audio latency.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- System Requirements -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Requirements</span>
+                <h2>Will It Run?</h2>
+            </div>
+            <div class="req-grid">
+                <div class="req-card">
+                    <h4>Minimum</h4>
+                    <ul>
+                        <li><strong>CPU:</strong> 64-bit x86, dual-core</li>
+                        <li><strong>RAM:</strong> 4 GB</li>
+                        <li><strong>Disk:</strong> 20 GB</li>
+                        <li><strong>GPU:</strong> Vulkan 1.1</li>
+                        <li><strong>Boot:</strong> UEFI</li>
+                    </ul>
+                </div>
+                <div class="req-card req-recommended">
+                    <div class="req-badge">Recommended</div>
+                    <h4>For Gaming</h4>
+                    <ul>
+                        <li><strong>CPU:</strong> Quad-core with AVX2</li>
+                        <li><strong>RAM:</strong> 8 GB+</li>
+                        <li><strong>Disk:</strong> 50 GB+ SSD</li>
+                        <li><strong>GPU:</strong> AMD RX 5000+ / NVIDIA GTX 1000+</li>
+                        <li><strong>Boot:</strong> UEFI + Secure Boot</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download -->
+    <section id="download" class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Download</span>
+                <h2>Get ZEN-OS</h2>
+                <p>Download the ISO, verify the checksum, write to USB, boot.</p>
+            </div>
+            <div class="download-grid">
+                <div class="download-card">
+                    <h4>1. Download</h4>
+                    <p>Grab the latest ISO from GitHub Releases.</p>
+                    <a href="https://github.com/zarigata/zen-os/releases" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                        Download v1.0.0-alpha
+                    </a>
+                </div>
+                <div class="download-card">
+                    <h4>2. Verify</h4>
+                    <p>Check the SHA256 checksum matches.</p>
+                    <code>sha256sum -c live-image-amd64.hybrid.iso.sha256</code>
+                </div>
+                <div class="download-card">
+                    <h4>3. Write</h4>
+                    <p>Flash to USB with dd or Ventoy.</p>
+                    <code>sudo dd if=zen-os.iso of=/dev/sdX bs=4M status=progress && sync</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Build -->
+    <section id="build" class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Build</span>
+                <h2>Build from Source</h2>
+                <p>Three commands. Docker-based. Works on any OS.</p>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Quick Build</span>
+                    <button class="code-copy" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>git clone https://github.com/zarigata/zen-os.git
+cd zen-os
+make build</code></pre>
+            </div>
+            <p class="build-note">
+                The full build guide covers prerequisites, Docker installation, USB writing, VM testing, and troubleshooting.
+                <a href="https://github.com/zarigata/zen-os/blob/main/BUILD.md" target="_blank" rel="noopener">Read BUILD.md →</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="section section-dark">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Roadmap</span>
+                <h2>What's Next</h2>
+            </div>
+            <div class="roadmap">
+                <div class="roadmap-item done">
+                    <div class="roadmap-dot"></div>
+                    <div>
+                        <h4>Phases 0–7</h4>
+                        <p>Foundation, gaming, engineering, theming, security, first-boot, handheld, MCP server</p>
+                    </div>
+                </div>
+                <div class="roadmap-item done">
+                    <div class="roadmap-dot"></div>
+                    <div>
+                        <h4>CI/CD Pipeline</h4>
+                        <p>GitHub Actions validation, package resolution, leak detection</p>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-dot"></div>
+                    <div>
+                        <h4>GNOME Edition</h4>
+                        <p>Alternative GNOME desktop for v1.1</p>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-dot"></div>
+                    <div>
+                        <h4>APT Repository</h4>
+                        <p>Custom Debian repository for ZEN-OS packages and updates</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <img src="assets/logo.png" alt="ZEN-OS" class="footer-logo">
+                    <p>Built for engineers.<br>Tuned for gaming.<br>Powered by Debian.</p>
+                </div>
+                <div class="footer-links">
+                    <div>
+                        <h5>Project</h5>
+                        <a href="https://github.com/zarigata/zen-os">GitHub</a>
+                        <a href="https://github.com/zarigata/zen-os/releases">Releases</a>
+                        <a href="https://github.com/zarigata/zen-os/issues">Issues</a>
+                    </div>
+                    <div>
+                        <h5>Documentation</h5>
+                        <a href="https://github.com/zarigata/zen-os/blob/main/README.md">README</a>
+                        <a href="https://github.com/zarigata/zen-os/blob/main/BUILD.md">Build Guide</a>
+                        <a href="https://github.com/zarigata/zen-os/blob/main/CONTRIBUTING.md">Contributing</a>
+                    </div>
+                    <div>
+                        <h5>Community</h5>
+                        <a href="https://github.com/zarigata/zen-os/discussions">Discussions</a>
+                        <a href="https://github.com/zarigata/zen-os/blob/main/SECURITY.md">Security</a>
+                        <a href="https://github.com/zarigata/zen-os/blob/main/LICENSE">License</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 ZEN-OS Project. Licensed under GPL-3.0.</p>
+                <p>Inspired by <a href="https://nobara-project.org/" target="_blank" rel="noopener">Nobara Linux</a>. Built on <a href="https://www.debian.org/" target="_blank" rel="noopener">Debian</a>.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy', 2000);
+            });
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Nav scroll effect
+        const nav = document.querySelector('.nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+[Desktop Entry]
+Name=ZEN-OS
+Comment=ZEN-OS Plasma Desktop Theme
+Version=1.0
+Author=ZEN-OS Project
+Type=Service
+X-KDE-ServiceTypes=Plasma/Theme
+X-KDE-PluginInfo-Author=ZEN-OS Project
+X-KDE-PluginInfo-Category=Plasma Theme
+X-KDE-PluginInfo-Depends=breeze-dark
+X-KDE-PluginInfo-EnabledByDefault=true
+X-KDE-PluginInfo-License=GPL-3.0
+X-KDE-PluginInfo-Name=zenos
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=https://github.com/zarigata/zen-os
+
+[AdaptiveTransparency]
+enabled=true
+
+[ContrastEffect]
+contrast=0.5
+enabled=true
+intensity=1.2
+saturation=1.7
+
+[Wallpaper]
+defaultWallpaperTheme=zenos-default
+defaultFileSuffix=.png
+defaultWidth=3840
+defaultHeight=2160

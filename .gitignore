@@ -111,5 +111,9 @@ wallpapers/
 mcp/
 doc/
 
+# --- Website previews ---
+docs/preview-*.png
+docs/lighthouse/
+
 # --- Sisyphus (internal AI planning — not for public) ---
 .sisyphus/

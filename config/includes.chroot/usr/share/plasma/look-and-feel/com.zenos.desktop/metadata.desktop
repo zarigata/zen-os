@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=ZEN-OS
+Comment=ZEN-OS Gaming & Engineering Desktop
+Version=1.0
+Author=ZEN-OS Project
+Type=Service
+X-KDE-ServiceTypes=Plasma/LookAndFeel
+X-KDE-ParentApp=org.kde.plasmashell
+X-Plasma-MainScript=defaults
+X-KDE-PluginInfo-Name=com.zenos.desktop
+X-KDE-PluginInfo-Author=ZEN-OS Project
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=https://github.com/zarigata/zen-os
+X-KDE-PluginInfo-Category=Plasma Theme
+X-KDE-PluginInfo-License=GPL-3.0
