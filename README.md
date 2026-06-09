@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  <a href="https://zarigata.github.io/zen-os/"><strong>🌐 Website</strong></a> · <a href="https://github.com/zarigata/zen-os/releases">Download</a> · <a href="BUILD.md">Build Guide</a> · <a href="CONTRIBUTING.md">Contributing</a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Base-Debian%20Trixie%20(13)-A80030?style=flat-square&logo=debian" alt="Debian Trixie"/>
   <img src="https://img.shields.io/badge/Desktop-KDE%20Plasma-1D99F3?style=flat-square&logo=kde" alt="KDE Plasma"/>
   <img src="https://img.shields.io/badge/Kernel-Liquorix%207.0-00C853?style=flat-square" alt="Liquorix Kernel"/>
