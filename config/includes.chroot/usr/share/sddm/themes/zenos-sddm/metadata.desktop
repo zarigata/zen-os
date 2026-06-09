@@ -1,0 +1,12 @@
+[SddmGreeterTheme]
+Name=ZEN-OS
+Description=ZEN-OS Gaming & Engineering Desktop
+Version=1.0
+Screenshot=background.png
+MainScript=Main.qml
+ConfigFile=
+TranslationsDirectory=
+Email=zenos@localhost
+License=GPL
+Type=sddm-theme
+Website=

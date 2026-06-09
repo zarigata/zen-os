@@ -1,0 +1,23 @@
+## GPU Drivers — AMD, Intel, NVIDIA utilities
+# AMD (full open-source stack)
+mesa-vulkan-drivers
+libgl1-mesa-dri
+mesa-va-drivers
+firmware-amd-graphics
+
+# Intel (full open-source stack)
+intel-media-va-driver
+i965-va-driver
+firmware-misc-nonfree
+
+# NVIDIA (no driver pre-installed — wizard handles post-install)
+# Only detection/config utilities
+nvidia-detect
+
+# Vulkan core (all GPUs)
+libvulkan1
+vulkan-tools
+spirv-tools
+
+# Mesa utils
+mesa-utils

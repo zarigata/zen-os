@@ -1,0 +1,28 @@
+# Heavy build artifacts
+*.iso
+*.img
+*.qcow2
+*.vmdk
+*.raw
+chroot/
+binary/
+bootstrap/
+cache/
+build-*.log
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+# Large directories
+config/chroot/
+config/binary/
+config/bootstrap/
+# QEMU and VM storage
+qemu-storage/
+# NTFS ghost files
+.ghost-ntfs-3g-*
+# Screenshots and logs
+*.log
+*.png
+screenshots/
+# Disk images
+disks/

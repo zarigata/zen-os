@@ -1,0 +1,2 @@
+# Liquorix Kernel Repository
+deb [signed-by=/etc/apt/keyrings/liquorix-keyring.gpg] https://liquorix.net/debian trixie main

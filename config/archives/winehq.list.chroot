@@ -1,0 +1,3 @@
+# WineHQ — DISABLED due to SSL cert issues in Docker
+# deb [signed-by=/usr/share/keyrings/winehq-archive-key.gpg] https://dl.winehq.org/wine-builds/debian/ trixie main
+# Using Debian's wine package as fallback

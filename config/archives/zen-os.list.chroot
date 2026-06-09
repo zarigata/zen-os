@@ -1,0 +1,3 @@
+# ZEN-OS custom APT repository
+# Placeholder — will be configured when custom packages are built
+# deb [signed-by=/usr/share/keyrings/zen-os-archive-keyring.gpg] https://repos.zen-os.org/debian trixie main

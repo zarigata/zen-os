@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ZEN-OS System Toolkit
+Comment=Disk eraser, backup manager, and package control
+Exec=/usr/local/bin/zenos-system-toolkit
+Icon=zenos-toolkit
+Type=Application
+Categories=System;Settings;
+Terminal=false
+X-KDE-StartupNotify=true

@@ -1,0 +1,11 @@
+# ZEN-OS Plymouth Theme
+# Teal background with pulsating logo + progress bar
+
+[Plymouth Theme]
+Name=ZEN-OS
+Description=ZEN-OS Boot Splash - Webcore/XP inspired
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/zenos
+ScriptFile=/usr/share/plymouth/themes/zenos/zenos.script

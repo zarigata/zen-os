@@ -1,0 +1,63 @@
+# ZEN-OS GRUB Theme
+# Webcore/XP inspired - teal gradient with grid pattern
+
+title-text: "ZEN-OS"
+title-font: "DejaVu Sans Bold 48"
+title-color: "#ffffff"
+message-font: "DejaVu Sans 14"
+message-color: "#c0c0c0"
+terminal-font: "DejaVu Sans Mono 14"
+desktop-image: "background.png"
+desktop-color: "#000000"
+
++ boot_menu {
+    left = 15%
+    top = 25%
+    width = 70%
+    height = 50%
+    item_font = "DejaVu Sans Bold 18"
+    item_color = "#c0d0d0"
+    selected_item_color = "#ffffff"
+    selected_item_font = "DejaVu Sans Bold 20"
+    item_height = 36
+    item_padding = 8
+    item_spacing = 4
+    selected_item_pixmap_style = "select_*.png"
+    scrollbar = true
+    scrollbar_width = 12
+    scrollbar_thumb = "scrollbar_thumb_*.png"
+    scrollbar_frame = "scrollbar_frame_*.png"
+    menu_pixmap_style = "menu_*.png"
+}
+
++ image {
+    left = 40%
+    top = 8%
+    width = 20%
+    height = 12%
+    file = "logo.png"
+}
+
++ progress_bar {
+    id = "__timeout__"
+    left = 15%
+    top = 85%
+    width = 70%
+    height = 16
+    bg_color = "#1a3040"
+    fg_color = "#00b0b0"
+    border_color = "#008080"
+    text = "@TIMEOUT_NOTIFICATION_SHORT@"
+    font = "DejaVu Sans 12"
+    text_color = "#c0c0c0"
+}
+
++ hbox {
+    left = 15%
+    top = 90%
+    + label {
+        text = "Use ↑↓ to select, Enter to boot, 'e' to edit"
+        font = "DejaVu Sans 12"
+        color = "#809090"
+    }
+}

@@ -1,0 +1,7 @@
+#!/bin/bash
+# Fix ownership of live-user home directory
+chown -R 1000:1000 /home/live-user 2>/dev/null || true
+
+# Copy Plasma defaults to skel for new users
+cp -r /home/live-user/.config/* /etc/skel/.config/ 2>/dev/null || true
+chown -R root:root /etc/skel/.config 2>/dev/null || true

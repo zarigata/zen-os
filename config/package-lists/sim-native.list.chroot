@@ -1,0 +1,10 @@
+## Simulation & Math — ZEN-OS Phase 2.4
+octave
+octave-control
+octave-signal
+python3-numpy
+python3-scipy
+python3-matplotlib
+python3-sympy
+python3-pandas
+jupyter-notebook

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ZEN-OS Hardware Profiler
+Comment=Scan hardware and get optimization recommendations
+Exec=konsole -e /usr/local/bin/zenos-hardware-profiler
+Icon=zenos-hardware
+Type=Application
+Categories=System;Settings;
+Terminal=false
+X-KDE-StartupNotify=true

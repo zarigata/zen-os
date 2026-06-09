@@ -1,0 +1,5 @@
+PRETTY_HOSTNAME=ZEN-OS
+ICON_NAME=computer
+CHASSIS=desktop
+DEPLOYMENT=production
+LOCATION=local

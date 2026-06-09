@@ -1,0 +1,32 @@
+# Mesa from Debian Experimental — pinned for gaming performance
+# This ensures latest Vulkan/OpenGL drivers for gaming while keeping
+# the rest of the system on Debian Testing (Trixie)
+#
+# IMPORTANT: Pin EXACT versions from experimental, not just the repo.
+# Update versions manually after testing with check-mesa-deps.sh
+# See versions.lock for current pinned versions.
+
+# Mesa core packages (amd64)
+Package: libegl-mesa0 libgl1-mesa-dri libglx-mesa0 libosmesa6 mesa-va-drivers mesa-vulkan-drivers libgbm1 libglapi-mesa
+Pin: release a=experimental
+Pin-Priority: 900
+
+# Mesa core packages (i386 — needed for 32-bit game support / Proton / Wine)
+Package: libegl-mesa0:i386 libgl1-mesa-dri:i386 libglx-mesa0:i386 libosmesa6:i386 mesa-va-drivers:i386 mesa-vulkan-drivers:i386 libgbm1:i386 libglapi-mesa:i386
+Pin: release a=experimental
+Pin-Priority: 900
+
+# Lock everything else from experimental to LOW priority
+Package: *
+Pin: release a=experimental
+Pin-Priority: 100
+
+# Default: prefer testing
+Package: *
+Pin: release a=testing
+Pin-Priority: 500
+
+# Liquorix kernel should be preferred from its own repo
+Package: linux-image-liquorix* linux-headers-liquorix*
+Pin: release o=liquorix
+Pin-Priority: 900

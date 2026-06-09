@@ -1,0 +1,99 @@
+#!/bin/bash
+set -e
+
+echo "ZEN-OS: Configuring display manager..."
+
+# 1. Remove GNOME display manager if it exists (should not be in v1.0)
+if dpkg -l | grep -q "^ii.*gdm3 "; then
+    echo "Removing gdm3 (GNOME display manager)..."
+    apt-get purge -y gdm3 2>/dev/null || true
+fi
+
+# 2. Remove GNOME session files to prevent them from appearing
+rm -f /usr/share/xsessions/gnome.desktop
+rm -f /usr/share/wayland-sessions/gnome.desktop
+rm -f /usr/share/wayland-sessions/gnome-wayland.desktop
+
+# 3. Remove any existing display-manager symlink
+rm -f /etc/systemd/system/display-manager.service
+
+# 4. Enable SDDM as the display manager
+systemctl enable sddm
+
+# 5. Set default target to graphical
+systemctl set-default graphical.target
+
+# 6. Detect available KDE Plasma session (Wayland preferred, X11 fallback)
+SESSION_NAME="plasma"  # Default to Wayland
+SESSION_TYPE="wayland"
+
+if [ -f "/usr/share/wayland-sessions/plasma.desktop" ]; then
+    SESSION_NAME="plasma"
+    SESSION_TYPE="wayland"
+    echo "Wayland session found: plasma"
+elif [ -f "/usr/share/wayland-sessions/plasmawayland.desktop" ]; then
+    SESSION_NAME="plasmawayland"
+    SESSION_TYPE="wayland"
+    echo "Wayland session found: plasmawayland"
+elif [ -f "/usr/share/xsessions/plasmax11.desktop" ]; then
+    SESSION_NAME="plasmax11"
+    SESSION_TYPE="x11"
+    echo "X11 session found: plasmax11"
+elif [ -f "/usr/share/xsessions/plasma.desktop" ]; then
+    SESSION_NAME="plasma"
+    SESSION_TYPE="x11"
+    echo "X11 session found: plasma"
+else
+    echo "WARNING: No KDE Plasma session found! Defaulting to plasma (Wayland)"
+    SESSION_NAME="plasma"
+    SESSION_TYPE="wayland"
+fi
+
+echo "Detected KDE session: ${SESSION_NAME} (${SESSION_TYPE})"
+
+# 7. Prevent live-config from overwriting our SDDM config at boot time
+# live-config's 0085-sddm script writes /etc/sddm.conf with X11 session
+# We write to /etc/sddm.conf.d/autologin.conf which takes priority
+# BUT we also mark live-config as "already done" for sddm to be safe
+mkdir -p /var/lib/live/config
+touch /var/lib/live/config/sddm
+echo "live-config SDDM bypassed (zenos-sddm config active)"
+
+# 8. Write SDDM autologin config (using .conf.d which takes priority over /etc/sddm.conf)
+mkdir -p /etc/sddm.conf.d
+cat > /etc/sddm.conf.d/autologin.conf << EOF
+[Autologin]
+User=live-user
+Session=${SESSION_NAME}
+Relogin=false
+
+[Theme]
+Current=zenos-sddm
+
+[Users]
+MinimumUid=1000
+
+[General]
+HaltCommand=/usr/bin/systemctl poweroff
+RebootCommand=/usr/bin/systemctl reboot
+Numlock=none
+EOF
+
+echo "SDDM config written: Session=${SESSION_NAME}, Theme=zenos-sddm"
+
+# 9. Create the live user
+if ! id live-user &>/dev/null; then
+    useradd -m -s /bin/bash -c "ZEN-OS Live User" live-user || true
+fi
+passwd -d live-user || true
+usermod -aG sudo,audio,video,input,docker live-user 2>/dev/null || true
+
+# 10. Set system hostname
+if [ -f /etc/hostname ]; then
+    echo "ZEN-OS" > /etc/hostname
+fi
+
+# 11. Fix udev.conf permissions
+chmod 644 /etc/udev/udev.conf 2>/dev/null || true
+
+echo "ZEN-OS: Display manager configuration complete (SDDM + ${SESSION_NAME})"

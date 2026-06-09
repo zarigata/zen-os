@@ -1,0 +1,13 @@
+## Hardware & Monitoring — ZEN-OS Phase 2.5
+arduino-core
+avrdude
+lm-sensors
+lshw
+hwinfo
+smartmontools
+dmidecode
+pciutils
+usbutils
+i2c-tools
+nvme-cli
+stress-ng

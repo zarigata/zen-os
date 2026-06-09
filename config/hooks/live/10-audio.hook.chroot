@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+# Mask PulseAudio so pipewire-pulse takes over
+systemctl mask pulseaudio.socket 2>/dev/null || true
+systemctl mask pulseaudio.service 2>/dev/null || true
+
+# PipeWire user services auto-start via D-Bus activation when desktop session starts
+# No --user systemctl calls in chroot (no user session exists)
+
+# Add live-user to audio groups
+usermod -aG audio live-user 2>/dev/null || true

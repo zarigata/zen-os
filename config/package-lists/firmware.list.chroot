@@ -1,0 +1,22 @@
+## Firmware — hardware support for all common devices
+## NOTE: firmware-linux-nonfree excluded — pulls firmware-b43-installer which needs network
+## NOTE: firmware-b43-installer excluded — downloads from github at install time, fails in Docker
+firmware-amd-graphics
+firmware-misc-nonfree
+firmware-linux
+firmware-iwlwifi
+firmware-realtek
+firmware-bnx2x
+firmware-qlogic
+firmware-brcm80211
+firmware-libertas
+firmware-netxen
+firmware-samsung
+firmware-siano
+firmware-ti-connectivity
+firmware-zd1211
+bluez-firmware
+# USB and input device firmware
+fwupd
+fwupd-amd64-signed
+fwupd-unsigned

@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+# Create systemd service to set CPU performance governor at boot
+# (can't write to /sys in chroot — do it at boot time instead)
+cat > /etc/systemd/system/zenos-cpu-perf.service << 'EOF'
+[Unit]
+Description=ZEN-OS CPU Performance Tuning
+After=multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/bash -c 'for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do [ -f "$cpu" ] && echo performance > "$cpu" 2>/dev/null; done; echo never > /sys/kernel/mm/transparent_hugepage/defrag 2>/dev/null; echo madvise > /sys/kernel/mm/transparent_hugepage/enabled 2>/dev/null; true'
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable zenos-cpu-perf.service

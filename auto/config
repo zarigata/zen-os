@@ -1,0 +1,34 @@
+#!/bin/sh
+set -e
+
+# ZEN-OS live-build configuration
+# This is the nerve center of the build
+
+lb config noauto \
+    --mode debian \
+    --system live \
+    --distribution trixie \
+    --architectures amd64 \
+    --binary-images iso-hybrid \
+    --binary-filesystem ext4 \
+    --bootloaders grub-efi \
+    --bootappend-live "boot=live components locales=en_US.UTF-8 keyboard-layouts=us quiet splash vt.global_cursor_default=0 logo.nologo apparmor=1 security=apparmor" \
+    --debian-installer live \
+    --debian-installer-gui true \
+    --archive-areas "main contrib non-free non-free-firmware" \
+    --security true \
+    --updates true \
+    --backports true \
+    --apt-recommends false \
+    --apt-indices false \
+    --firmware-binary true \
+    --firmware-chroot false \
+    --initramfs live-boot \
+    --chroot-filesystem squashfs \
+    --iso-application "ZEN-OS" \
+    --iso-publisher "ZEN-OS Project" \
+    --iso-volume "ZEN-OS $(date +%Y%m%d)" \
+    --mirror-binary http://deb.debian.org/debian/ \
+    --uefi-secure-boot disable \
+    --initsystem systemd \
+    "${@}"

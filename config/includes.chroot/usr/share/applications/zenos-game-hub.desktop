@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ZEN-OS Game Hub
+Comment=Launch your games with optimizations
+Exec=/usr/local/bin/zenos-game-hub
+Icon=applications-games
+Type=Application
+Categories=Game;System;
+Terminal=false
+X-KDE-StartupNotify=true

@@ -1,0 +1,108 @@
+# ZEN-OS Competitive KDE Plasma Defaults
+# These make ZEN-OS stand out from vanilla KDE
+
+# Set Breeze Dark theme as default
+[Globals][kcminput]
+theme=breeze_dark
+
+[General]
+# Use double-click to open files (Windows/XP style)
+SingleClick=false
+# Show seconds in clock
+ShowSeconds=true
+# Smooth scroll
+SmoothScroll=true
+# Delay for tooltips
+TooltipDelay=300
+
+[kcmfonts]
+# Better default font
+font=Noto Sans,10,-1,5,50,0,0,0,0,0
+menuFont=Noto Sans,10,-1,5,50,0,0,0,0,0
+smallestReadableFont=Noto Sans,8,-1,5,50,0,0,0,0,0
+fixed=JetBrains Mono,10,-1,5,50,0,0,0,0,0
+
+[kwinrc]
+[org.kde.kdecoration2]
+# Window button order (Windows style)
+ButtonsOnLeft=
+ButtonsOnRight=IAX
+# No border for maximized windows
+BorderlessMaximizedWindows=true
+
+[Effect-blur]
+# Strong blur for panels
+BlurStrength=15
+NoiseStrength=2
+
+[Effect-slide]
+# Faster window animations
+Duration=150
+
+[DesktopEffects]
+# Enable cool effects
+BlurEnabled=true
+ContrastEnabled=true
+SlideEnabled=true
+
+[Windows]
+# Focus follows mouse (engineering style)
+FocusPolicy=ClickToFocus
+# Auto-raise on focus
+AutoRaise=true
+AutoRaiseInterval=100
+
+[kcminput]
+# Natural scrolling
+cursorTheme=breeze_cursors
+cursorSize=24
+
+[plasmashell]
+# Disable baloo file indexing (performance)
+[$Version]
+update_info=update134,dolphin.upd::recents
+
+[KFileDialog Settings]
+# Always show hidden files
+ShowHidden=true
+
+[baloofilerc]
+# Disable Baloo indexing (too slow on live USB)
+General]
+Indexing-Enabled=false
+
+[dolphinrc]
+# Dolphin defaults
+General]
+RememberOpenedTabs=false
+ShowSelectionToggle=false
+ShowStatusBar=false
+
+[MainWindow]
+MenuBar=Disabled
+ToolBarsMovable=Disabled
+
+[konqueror]
+# Better Konqueror defaults (if used)
+HTML Settings]
+AutoLoadImages=true
+EnableJavascript=true
+
+[konsolerc]
+# Terminal defaults
+[Desktop Entry]
+DefaultProfile=ZEN-OS.profile
+
+[Notification Messages]
+# Disable annoying notifications
+closeAllEmptyTabs=true
+
+[ksmserver]
+# Login and logout settings
+General]
+loginMode=default
+offerShutdown=true
+
+[Krfb]
+# VNC server disabled by default
+Enabled=false

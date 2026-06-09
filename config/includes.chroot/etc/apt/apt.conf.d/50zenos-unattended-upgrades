@@ -1,0 +1,19 @@
+# /etc/apt/apt.conf.d/50zenos-unattended-upgrades — Auto security updates
+# Pragmatic: auto-install security updates, hold back everything else
+
+Unattended-Upgrade "1";
+Unattended-Upgrade::Allowed-Origins {
+    "${distro_id}:${distro_codename}-security";
+    "${distro_id} ${distro_codename}-security";
+};
+Unattended-Upgrade::Package-Blacklist {
+    # Never auto-update kernel (Liquorix — manual control)
+    "linux-liquorix-*";
+    "linux-image-*";
+    "linux-headers-*";
+    # Never auto-update NVIDIA drivers (need DKMS rebuild)
+    "nvidia-*";
+};
+Unattended-Upgrade::AutoFixInterruptedDpkg "true";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+Unattended-Upgrade::Automatic-Reboot "false";

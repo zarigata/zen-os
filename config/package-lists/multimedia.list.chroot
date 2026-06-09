@@ -1,0 +1,47 @@
+## Multimedia — codecs, audio, video
+# Audio framework
+pipewire
+pipewire-pulse
+pipewire-audio
+pipewire-jack
+pipewire-alsa
+pipewire-libcamera
+libspa-0.2-bluetooth
+libspa-0.2-jack
+wireplumber
+pulseaudio-utils
+
+# Video codecs
+libavcodec-extra
+libavformat-extra
+ffmpeg
+gstreamer1.0-plugins-bad
+gstreamer1.0-plugins-ugly
+gstreamer1.0-vaapi
+gstreamer1.0-libav
+gstreamer1.0-plugins-base
+gstreamer1.0-plugins-good
+gstreamer1.0-x
+
+# Media players and tools
+vlc
+mpv
+ffmpegthumbs
+
+# DVD support
+libdvdcss2
+libdvdread8
+libdvdnav4
+
+# Image support
+imagemagick
+ feh
+gthumb
+
+# Fonts
+fonts-noto
+fonts-noto-cjk
+fonts-noto-color-emoji
+fonts-hack
+fonts-jetbrains-mono
+fonts-liberation

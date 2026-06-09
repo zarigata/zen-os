@@ -1,0 +1,98 @@
+#!/bin/bash
+# ZEN-OS post-install cleanup - remove GNOME, fix SDDM, ensure KDE Plasma default
+set -e
+
+echo "ZEN-OS: Post-install cleanup..."
+
+# 1. Remove GNOME if it got pulled in (should not be in v1.0)
+if dpkg -l | grep -q "^ii.*gdm3 "; then
+    echo "Removing gdm3..."
+    apt-get purge -y gdm3 2>/dev/null || true
+    rm -f /etc/systemd/system/display-manager.service
+fi
+
+if dpkg -l | grep -q "^ii.*gnome-shell "; then
+    echo "Removing gnome-shell..."
+    apt-get purge -y gnome-shell gnome-session gnome-backgrounds 2>/dev/null || true
+fi
+
+# Remove leftover GNOME session files
+rm -f /usr/share/xsessions/gnome.desktop
+rm -f /usr/share/wayland-sessions/gnome.desktop
+rm -f /usr/share/wayland-sessions/gnome-wayland.desktop
+
+# 2. Ensure SDDM is the only display manager
+rm -f /etc/systemd/system/display-manager.service
+systemctl enable sddm 2>/dev/null || true
+
+# 3. Fix SDDM autologin - detect available session (Wayland preferred)
+mkdir -p /etc/sddm.conf.d
+
+SESSION_NAME="plasma"
+SESSION_TYPE="wayland"
+
+# Priority: Wayland plasma > Wayland plasmawayland > X11 plasmax11 > X11 plasma
+if [ -f "/usr/share/wayland-sessions/plasma.desktop" ]; then
+    SESSION_NAME="plasma"
+    SESSION_TYPE="wayland"
+    echo "Wayland session: plasma"
+elif [ -f "/usr/share/wayland-sessions/plasmawayland.desktop" ]; then
+    SESSION_NAME="plasmawayland"
+    SESSION_TYPE="wayland"
+    echo "Wayland session: plasmawayland"
+elif [ -f "/usr/share/xsessions/plasmax11.desktop" ]; then
+    SESSION_NAME="plasmax11"
+    SESSION_TYPE="x11"
+    echo "X11 session: plasmax11"
+elif [ -f "/usr/share/xsessions/plasma.desktop" ]; then
+    SESSION_NAME="plasma"
+    SESSION_TYPE="x11"
+    echo "X11 session: plasma"
+fi
+
+cat > /etc/sddm.conf.d/autologin.conf << EOF
+[Autologin]
+User=live-user
+Session=${SESSION_NAME}
+Relogin=false
+
+[Theme]
+Current=zenos-sddm
+
+[Users]
+MinimumUid=1000
+
+[General]
+HaltCommand=/usr/bin/systemctl poweroff
+RebootCommand=/usr/bin/systemctl reboot
+Numlock=none
+EOF
+
+echo "SDDM config written: Session=${SESSION_NAME} (${SESSION_TYPE})"
+
+# 4. Ensure live-user exists and can auto-login
+if ! id live-user &>/dev/null; then
+    useradd -m -s /bin/bash -c "ZEN-OS Live User" live-user || true
+fi
+passwd -d live-user || true
+usermod -aG sudo,audio,video,input,docker live-user 2>/dev/null || true
+
+# 5. Fix SDDM theme permissions
+if [ -d /usr/share/sddm/themes/zenos-sddm ]; then
+    chmod -R 755 /usr/share/sddm/themes/zenos-sddm
+    # Ensure metadata.desktop exists
+    if [ ! -f /usr/share/sddm/themes/zenos-sddm/metadata.desktop ]; then
+        cat > /usr/share/sddm/themes/zenos-sddm/metadata.desktop << EOF
+[SddmGreeterTheme]
+Name=ZEN-OS
+Description=ZEN-OS Gaming & Engineering Desktop
+Version=1.0
+MainScript=Main.qml
+Type=sddm-theme
+EOF
+    fi
+fi
+
+echo "ZEN-OS: Post-install cleanup complete"
+echo "  Session: ${SESSION_NAME} (${SESSION_TYPE})"
+echo "  Theme: zenos-sddm"

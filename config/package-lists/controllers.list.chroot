@@ -1,0 +1,8 @@
+## Controller and input support
+## Gaming controllers + handheld input devices
+xboxdrv
+steam-devices
+antimicrox
+maliit-keyboard
+evtest
+input-utils

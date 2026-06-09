@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+# auto/clean — called BY live-build during `lb clean`
+# Must use `noauto` to prevent recursion
+
+echo "=== ZEN-OS: Cleaning ==="
+lb clean noauto --purge "${@}"
+rm -f build-*.log *.torrent *.part* *.sha256

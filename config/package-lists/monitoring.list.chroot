@@ -1,0 +1,17 @@
+## Monitoring & Hardware Tools — ZEN-OS Phase 1.5
+# System monitoring
+btop
+nvtop
+lm-sensors
+lshw
+hwinfo
+smartmontools
+dmidecode
+
+# Hardware detection
+pciutils
+usbutils
+i2c-tools
+
+# Stress testing
+stress-ng

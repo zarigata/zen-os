@@ -1,0 +1,15 @@
+[Unit]
+Description=ZEN-OS First-Boot GUI Wizard
+After=graphical-session.target
+Wants=graphical-session.target
+ConditionPathExists=!/var/lib/zenos/.first-boot-done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/zenos-first-boot-gui
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

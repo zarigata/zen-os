@@ -1,0 +1,4 @@
+# Prevent GNOME from being installed (ZEN-OS v1.0 uses KDE Plasma)
+Package: gnome-shell gdm3 gnome-session gnome-backgrounds gnome-console nautilus gnome-text-editor gnome-software gnome-control-center gnome-tweaks gnome-terminal
+Pin: release *
+Pin-Priority: -1

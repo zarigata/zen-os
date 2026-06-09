@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=ZEN-OS Wallpaper Setup
+Comment=Set ZEN-OS default wallpaper on first login
+Exec=/usr/local/bin/zenos-set-wallpaper
+Icon=preferences-desktop-wallpaper
+Categories=System;Settings;
+OnlyShowIn=KDE;
+NoDisplay=false
+X-GNOME-Autostart-enabled=true

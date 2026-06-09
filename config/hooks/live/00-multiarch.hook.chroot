@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+# Enable i386 multiarch for 32-bit game support (Proton, Wine, Steam)
+dpkg --add-architecture i386
+
+# Update package lists to include i386 packages
+apt-get update
+
+# Install packages that require i386 architecture
+# These CANNOT go in package lists because live-build installs packages
+# BEFORE running hooks — i386 isn't available during package install phase
+apt-get install -y --no-install-recommends \
+    steam-installer \
+    wine wine64 wine32 \
+    libgl1-mesa-dri:i386 \
+    mesa-vulkan-drivers:i386 \
+    libvulkan1:i386 \
+    libglx-mesa0:i386 \
+    libegl-mesa0:i386 \
+    || echo "WARNING: Some i386 packages failed to install"

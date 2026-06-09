@@ -1,0 +1,25 @@
+## Gaming Platforms — ZEN-OS Phase 1.2
+# NOTE: steam-installer depends on i386 libs — installed by 00-multiarch hook
+# Only steam-devices (no i386 deps) goes here
+steam-devices
+
+# Wine 64-bit (Debian's stable wine — 10.0 as of Trixie)
+# wine32 and full wine setup installed by 00-multiarch hook after i386 enabled
+winetricks
+
+# Gaming performance overlays and tools
+mangohud
+gamemode
+gamemode-daemon
+libgamemode0
+libgamemodeauto0
+goverlay
+vkbasalt
+
+# DXVK — DirectX to Vulkan translation (system-level)
+dxvk
+
+# Monitoring
+btop
+nvtop
+lm-sensors

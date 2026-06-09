@@ -1,0 +1,48 @@
+# ZEN-OS KWin Window Rules — Competitive defaults
+# These rules improve window management for engineering + gaming
+
+[1]
+Description=Remember Steam position
+clientmachine=localhost
+clientmachinematch=0
+position=200,200
+wmclass=steam
+wmclassmatch=1
+
+[2]
+Description=Always maximize Konsole
+clientmachine=localhost
+clientmachinematch=0
+maximizehoriz=true
+maximizevert=true
+wmclass=konsole
+wmclassmatch=1
+
+[3]
+Description=Remember LibreOffice position
+clientmachine=localhost
+clientmachinematch=0
+position=100,100
+wmclass=soffice
+wmclassmatch=1
+
+[4]
+Description=FreeCAD maximized
+clientmachine=localhost
+clientmachinematch=0
+maximizehoriz=true
+maximizevert=true
+wmclass=FreeCAD
+wmclassmatch=1
+
+[5]
+Description=KiCad maximized
+clientmachine=localhost
+clientmachinematch=0
+maximizehoriz=true
+maximizevert=true
+wmclass=kicad
+wmclassmatch=1
+
+[General]
+count=5

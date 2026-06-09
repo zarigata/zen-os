@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "zenos-build": {
+      "command": "python3",
+      "args": ["/mnt/projects-ssd/ZEN-OS/mcp-server/server.py"],
+      "env": {
+        "ZENOS_WORKSPACE": "/mnt/projects-ssd/ZEN-OS",
+        "ZENOS_VNC_DISPLAY": ":2"
+      }
+    },
+    "zenos-vm": {
+      "command": "mcp-qemu-vnc",
+      "args": ["--stdio"],
+      "env": {}
+    }
+  }
+}

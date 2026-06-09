@@ -1,0 +1,5 @@
+#!/bin/bash
+# Plymouth theme setup — update initramfs to include ZEN-OS theme
+
+plymouth-set-default-theme zenos 2>/dev/null || true
+update-initramfs -u -k all 2>/dev/null || true

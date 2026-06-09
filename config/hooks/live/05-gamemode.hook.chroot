@@ -1,0 +1,8 @@
+#!/bin/bash
+# GameMode setup — daemon activates on-demand via D-Bus, no systemd service needed
+
+# Add live-user to gamemode group (allows non-root users to request gamemode)
+usermod -aG gamemode live-user 2>/dev/null || true
+
+# Verify gamemode binary is present
+which gamemoded || echo "WARNING: gamemoded not found"

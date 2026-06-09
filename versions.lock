@@ -1,0 +1,83 @@
+# ZEN-OS Version Lock File
+# This file records the exact versions of critical packages used in the build.
+# These versions are pinned to ensure reproducible builds.
+# Update this file when bumping versions after testing.
+
+[build-system]
+# Build host requirements (run inside Docker Debian Trixie container)
+live-build = *
+debootstrap = *
+squashfs-tools = *
+xorriso = *
+grub-pc-bin = *
+grub-efi-amd64-bin = *
+ovmf = *
+
+[base-system]
+# Debian base
+distribution = trixie
+# Use snapshot.debian.org for reproducible builds
+# snapshot_timestamp = YYYYMMDDThhmmssZ
+
+[kernel]
+# Liquorix gaming-tuned kernel (from packages.chroot/)
+linux-image-7.0.5-1-liquorix-amd64 = 7.0-4.1~trixie
+linux-headers-7.0.5-1-liquorix-amd64 = 7.0-4.1~trixie
+# Debian fallback kernel
+linux-image-6.12.86+deb13-amd64 = 6.12.86-1
+
+[mesa]
+# Mesa 25.0.7 — already in Debian Trixie (no need for experimental pinning yet)
+libgl1-mesa-dri = 25.0.7-2
+mesa-vulkan-drivers = 25.0.7-2
+# Pin file: config/includes.chroot/etc/apt/preferences.d/mesa.pref
+# Re-evaluate experimental pinning when Trixie Mesa falls behind
+
+[gaming]
+# Steam (Debian contrib — renamed from steam-launcher)
+steam-installer = 1:1.0.0.83~ds-3
+steam-devices = 1:1.0.0.83~ds-3
+# Wine (Debian stable, not WineHQ — WineHQ staging needs separate repo)
+wine = 10.0~repack-6
+wine64 = 10.0~repack-6
+wine32 = 10.0~repack-6 (i386)
+winetricks = *
+# DXVK — DirectX to Vulkan translation
+dxvk = 2.6+ds-1
+# GameMode — on-demand via D-Bus
+gamemode = 1.8.2-2
+gamemode-daemon = 1.8.2-2
+# MangoHud — FPS/performance overlay
+mangohud = 0.7.2-2
+# Gamescope — NOT in Debian (Flatpak wizard or build from source)
+# gamescope = N/A
+# Goverlay — MangoHud GUI config
+goverlay = 1.0-1
+# vkBasalt — post-processing
+vkbasalt = 0.3.2.10-1+b2
+# Monitoring
+btop = 1.3.2-0.1
+nvtop = 3.2.0-1
+
+[desktop-kde]
+plasma-desktop = *
+plasma-workspace = *
+sddm = *
+
+[status]
+# Build status tracking
+last_successful_build = 2026-05-10T00:34:00Z
+last_iso_size = 3.4G
+last_boot_test = PASS (UEFI + Legacy, login prompt confirmed)
+last_build_duration = 27m 39s
+sddm_enabled = true
+display_manager = sddm.service
+default_target = graphical.target
+live_user = live-user
+installer = present (gtk + text)
+phase = 1 (Gaming Stack)
+gaming_packages = steam-installer, wine+32bit, mangohud, gamemode, dxvk, vulkan-tools, goverlay, vkbasalt
+i386_multiarch = enabled
+gaming_sysctl = configured
+pipewire_lowlatency = configured
+cpuperf_service = enabled

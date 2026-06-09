@@ -1,0 +1,65 @@
+# ZEN-OS Build Environment
+# Runs on any host (Fedora/Nobara, Ubuntu, macOS) — produces Debian live ISO
+FROM debian:trixie
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install all build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    live-build \
+    debootstrap \
+    squashfs-tools \
+    xorriso \
+    grub-pc-bin \
+    grub-efi-amd64-bin \
+    grub-efi-amd64-signed \
+    shim-signed \
+    ovmf \
+    apt-transport-https \
+    apt-utils \
+    gnupg \
+    ca-certificates \
+    curl \
+    wget \
+    git \
+    sudo \
+    dosfstools \
+    mtools \
+    syslinux-common \
+    isolinux \
+    pbuilder \
+    devscripts \
+    debhelper \
+    fakeroot \
+    dpkg-dev \
+    cpio \
+    lz4 \
+    zstd \
+    xz-utils \
+    file \
+    patch \
+    python3 \
+    python3-pip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Liquorix repo key (needed for kernel during build)
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -fsSL 'https://liquorix.net/liquorix-keyring.gpg' | gpg --batch --yes --dearmor -o /etc/apt/keyrings/liquorix-keyring.gpg && \
+    cp /etc/apt/keyrings/liquorix-keyring.gpg /usr/share/keyrings/liquorix-archive-keyring.gpg
+
+# Install WineHQ key (needed for wine during build)
+RUN curl -fsSL https://dl.winehq.org/wine-builds/winehq.key | gpg --batch --yes --dearmor -o /usr/share/keyrings/winehq-archive-keyring.gpg
+
+# Steam is available in Debian contrib (already in archive-areas).
+# We add Valve's repo for post-install updates via a hook, not in the build env.
+# The steam-launcher .deb includes its own GPG key for the repo.
+
+# Working directory
+WORKDIR /build
+
+# Copy project files
+COPY . /build/
+
+# Default: run the full build
+CMD ["bash", "scripts/build.sh"]

@@ -1,0 +1,35 @@
+#!/bin/bash
+# Pre-configure environment for firmware-b43-installer
+# This package's postinst downloads firmware from github.com
+# In Docker builds, DNS/SSL may fail, so we create dummy success conditions
+
+# Create the expected directory structure and mark as already configured
+if dpkg -l firmware-b43-installer &>/dev/null; then
+    # Already installed, nothing to do
+    exit 0
+fi
+
+# If the package exists but isn't configured, pre-create expected files
+# so the postinst script doesn't try to download
+mkdir -p /lib/firmware/b43
+mkdir -p /lib/firmware/b43legacy
+mkdir -p /usr/share/doc/firmware-b43-installer
+
+# Touch a stamp file that some versions check
+touch /lib/firmware/b43/.b43.fw 2>/dev/null || true
+touch /lib/firmware/b43legacy/.b43legacy.fw 2>/dev/null || true
+
+# Create dpkg postinst override that always succeeds
+cat > /tmp/b43-postinst-override.sh << 'OVERRIDE'
+#!/bin/bash
+# Override for firmware-b43-installer postinst
+# If the real postinst fails due to network issues, just succeed
+if [ "$1" = "configure" ]; then
+    # Try the real postinst first
+    if ! /usr/share/doc/firmware-b43-installer/postinst.bcm43xxfwcutter 2>/dev/null; then
+        echo "ZEN-OS: Skipping b43 firmware download (offline build)"
+    fi
+fi
+exit 0
+OVERRIDE
+chmod +x /tmp/b43-postinst-override.sh

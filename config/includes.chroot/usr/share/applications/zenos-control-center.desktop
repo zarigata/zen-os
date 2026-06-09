@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ZEN-OS Control Center
+Comment=Manage performance, games, and system settings
+Exec=/usr/local/bin/zenos-control-center
+Icon=zenos-logo
+Type=Application
+Categories=System;Settings;
+Terminal=true
+X-KDE-StartupNotify=true

@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+# auto/build — called BY live-build during `lb build`
+# Must use `noauto` to prevent recursion
+
+BUILD_START=$(date +%s)
+echo "=== ZEN-OS: Building ==="
+
+lb build noauto "${@}"
+EXIT_CODE=$?
+
+BUILD_END=$(date +%s)
+MINUTES=$(( (BUILD_END - BUILD_START) / 60 ))
+SECONDS=$(( (BUILD_END - BUILD_START) % 60 ))
+
+if [ $EXIT_CODE -eq 0 ]; then
+    ISO_FILE=$(ls -t live-image-*.hybrid.iso 2>/dev/null | head -1)
+    [ -n "$ISO_FILE" ] && echo "=== ISO: $ISO_FILE ($(du -h "$ISO_FILE" | cut -f1)) ==="
+fi
+echo "=== Duration: ${MINUTES}m ${SECONDS}s ==="
+
+exit $EXIT_CODE

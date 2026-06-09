@@ -1,0 +1,85 @@
+#!/usr/bin/expect -f
+set timeout 60
+
+# Start QEMU with serial
+spawn /usr/bin/qemu-system-x86_64 \
+    -enable-kvm -smp 4 -m 4096 \
+    -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/ovmf/OVMF_CODE.fd \
+    -drive if=pflash,format=raw,file=/tmp/zenos-ovmf-vars.fd \
+    -drive file=/mnt/projects-ssd/ZEN-OS/live-image-amd64.hybrid.iso,media=cdrom,readonly=on \
+    -boot d \
+    -netdev user,id=net0,hostfwd=tcp::2222-:22 \
+    -device virtio-net-pci,netdev=net0 \
+    -nographic \
+    -name zenos-serial-test
+
+# Wait for login prompt
+expect {
+    "login:" { 
+        send "live-user\r"
+        sleep 2
+    }
+    timeout {
+        puts "Timeout waiting for login prompt"
+        exit 1
+    }
+}
+
+expect {
+    "Password:" {
+        send "\r"
+        sleep 2
+    }
+    timeout {
+        puts "Timeout waiting for password prompt"
+        exit 1
+    }
+}
+
+expect {
+    "live-user@" {
+        puts "LOGIN SUCCESS"
+    }
+    timeout {
+        puts "Login might have failed"
+    }
+}
+
+# Check Xorg status
+send "ps aux | grep Xorg | grep -v grep\r"
+sleep 1
+expect "live-user@"
+
+# Check SDDM status  
+send "systemctl status sddm --no-pager -n 5\r"
+sleep 1
+expect "live-user@"
+
+# Check plasma session
+send "ps aux | grep plasma | grep -v grep\r"
+sleep 1
+expect "live-user@"
+
+# Check session file
+send "cat /usr/share/xsessions/plasmax11.desktop\r"
+sleep 1
+expect "live-user@"
+
+# Check display variable
+send "echo DISPLAY=$DISPLAY\r"
+sleep 1
+expect "live-user@"
+
+# Check if we're in X11
+send "loginctl show-session \$(loginctl | grep live-user | awk '{print \$1}') -p Type\r"
+sleep 2
+expect "live-user@"
+
+# Logout and exit
+send "exit\r"
+sleep 1
+
+send "\003"
+sleep 1
+
+puts "Test complete"

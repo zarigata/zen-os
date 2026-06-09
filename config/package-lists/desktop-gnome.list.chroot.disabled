@@ -1,0 +1,18 @@
+## GNOME Desktop — ZEN-OS v1.1 (deferred)
+## This package list is prepared for the GNOME edition but not used in v1.0
+gnome-shell
+gnome-console
+nautilus
+gnome-text-editor
+gnome-software
+gnome-software-plugin-flatpak
+gnome-control-center
+gnome-tweaks
+gnome-terminal
+gnome-session
+gdm3
+gnome-backgrounds
+adwaita-icon-theme
+gnome-shell-extensions
+gnome-shell-extension-dash-to-dock
+gnome-shell-extension-appindicator

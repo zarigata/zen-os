@@ -1,0 +1,15 @@
+[Unit]
+Description=ZEN-OS First-Boot Backend Setup
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=!/var/lib/zenos/.first-boot-backend-done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/zenos-first-boot
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

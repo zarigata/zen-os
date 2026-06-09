@@ -1,0 +1,21 @@
+#!/bin/bash
+# Enable first-boot wizard systemd service
+set -e
+
+# Enable the first-boot service
+systemctl enable zenos-first-boot.service 2>/dev/null || true
+
+# Create marker directory
+mkdir -p /var/lib/zenos
+
+# Allow live-user to run wizard scripts without password
+cat > /etc/sudoers.d/zenos-first-boot << EOF
+# ZEN-OS first-boot wizard — allow live-user to run setup scripts
+live-user ALL=(root) NOPASSWD: /usr/local/bin/zenos-first-boot
+live-user ALL=(root) NOPASSWD: /usr/local/bin/zenos-nvidia-install
+live-user ALL=(root) NOPASSWD: /usr/local/bin/zenos-hardware-detect
+live-user ALL=(root) NOPASSWD: /usr/local/bin/zenos-flatpak-selector
+EOF
+chmod 440 /etc/sudoers.d/zenos-first-boot 2>/dev/null || true
+
+echo "ZEN-OS: First-boot wizard enabled"

@@ -1,0 +1,45 @@
+## Development Core — ZEN-OS Phase 2.1
+# Build tools
+build-essential
+cmake
+gcc
+g++
+clang
+lldb
+gdb
+make
+pkg-config
+
+# Languages & runtimes
+python3
+python3-pip
+python3-venv
+python3-dev
+nodejs
+npm
+default-jdk
+rustc
+cargo
+
+# Version control
+git
+
+# Containers & virtualization
+docker.io
+podman
+virt-manager
+qemu-utils
+libvirt-daemon-system
+libvirt-clients
+
+# SSH & networking
+openssh-server
+nmap
+wireshark
+tcpdump
+iperf3
+traceroute
+
+# Editors
+vim
+nano

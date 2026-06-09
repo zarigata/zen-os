@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ZEN-OS Performance
+Comment=Switch between Gaming, Balanced, and Battery profiles
+Exec=konsole -e /usr/local/bin/zenos-performance
+Icon=zenos-performance
+Type=Application
+Categories=System;Settings;
+Terminal=false
+X-KDE-StartupNotify=true

@@ -1,0 +1,4 @@
+# Valve USB devices — Steam Deck, Steam Controller
+SUBSYSTEM=="usb", ATTRS{idVendor}=="28de", MODE="0666"
+KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", TAG+="uaccess"
