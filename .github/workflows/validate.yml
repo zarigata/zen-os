@@ -32,15 +32,23 @@ jobs:
       - name: Validate hook scripts
         run: |
           ERRORS=0
-          for hook in config/hooks/live/*.hook.chroot; do
+          for hook in config/hooks/live/*.hook.chroot config/hooks/normal/*.hook.chroot; do
             if [ -L "$hook" ]; then
-              TARGET=$(readlink -f "$hook")
-              if [ ! -f "$TARGET" ]; then
+              TARGET=$(readlink "$hook")
+              # Skip symlinks to live-build system hooks (only exist on build host)
+              if [[ "$TARGET" == /usr/share/* ]]; then
+                echo "  SKIP: $(basename $hook) (live-build system hook)"
+                continue
+              fi
+              if [ ! -f "$hook" ]; then
                 echo "WARN: Broken symlink: $hook -> $TARGET"
                 continue
               fi
             fi
-            if ! bash -n "$hook" 2>/dev/null; then
+            if [ ! -f "$hook" ]; then
+              continue
+            fi
+            if ! bash -n "$hook" 2>&1; then
               echo "ERROR: Syntax error in $hook"
               ERRORS=$((ERRORS + 1))
             else
