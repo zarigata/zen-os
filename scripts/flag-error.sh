@@ -42,7 +42,7 @@ cat > "${REPORT_PATH}/report.json" <<EOF
   "id": "${REPORT_ID}",
   "timestamp": "$(date -Iseconds)",
   "description": "${DESCRIPTION}",
-  "iso": "$(ls -lh /mnt/projects-ssd/ZEN-OS/live-image-amd64.hybrid.iso 2>/dev/null || echo 'not found')",
+    "iso": "$(ls -lh live-image-amd64.hybrid.iso 2>/dev/null || echo 'not found')",
   "screenshot": "${REPORT_PATH}/screenshot.png",
   "serial_log": "${REPORT_PATH}/serial.log",
   "vm_name": "${QEMU_NAME}"

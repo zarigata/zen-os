@@ -15,7 +15,7 @@ qemu_cmd = [
     "-enable-kvm", "-smp", "4", "-m", "4096",
     "-drive", "if=pflash,format=raw,readonly=on,file=/usr/share/edk2/ovmf/OVMF_CODE.fd",
     "-drive", "if=pflash,format=raw,file=/tmp/zenos-ovmf-vars.fd",
-    "-drive", "file=/mnt/projects-ssd/ZEN-OS/live-image-amd64.hybrid.iso,media=cdrom,readonly=on",
+    "-drive", "file=live-image-amd64.hybrid.iso,media=cdrom,readonly=on",
     "-boot", "d",
     "-netdev", "user,id=net0,hostfwd=tcp::2222-:22",
     "-device", "virtio-net-pci,netdev=net0",

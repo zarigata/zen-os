@@ -4,7 +4,17 @@ import json
 import time
 
 ws_url = "localhost:9222"
-page_id = "86A0DB96CB88504305A0B43F7E07A112"
+
+def get_first_page_id():
+    import urllib.request
+    try:
+        with urllib.request.urlopen(f"http://{ws_url}/json", timeout=5) as resp:
+            pages = json.loads(resp.read().decode())
+            return pages[0]["id"] if pages else None
+    except Exception:
+        return None
+
+page_id = get_first_page_id()
 
 def send_cmd(sock, cmd):
     cmd_json = json.dumps(cmd)

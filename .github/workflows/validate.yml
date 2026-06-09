@@ -105,6 +105,19 @@ jobs:
           done
           echo ".gitignore check complete"
 
+      - name: Check for hardcoded paths or personal info
+        run: |
+          ERRORS=0
+          # Check for absolute paths that reference specific machines
+          grep -rn '/home/[a-z]' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null | grep -v '/home/live-user' | grep -v '#.*home' && ERRORS=$((ERRORS+1)) || true
+          grep -rn '/mnt/' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null && ERRORS=$((ERRORS+1)) || true
+          grep -rn '/Users/' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null && ERRORS=$((ERRORS+1)) || true
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "ERROR: Found hardcoded absolute paths. Use relative paths or environment variables."
+            exit 1
+          fi
+          echo "No hardcoded paths found"
+
   docker-build-test:
     runs-on: ubuntu-latest
     name: Docker build image test

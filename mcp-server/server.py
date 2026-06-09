@@ -14,7 +14,7 @@ from typing import Optional
 from fastmcp import FastMCP
 
 # Configuration
-WORKSPACE = Path(os.environ.get("ZENOS_WORKSPACE", "/mnt/projects-ssd/ZEN-OS"))
+WORKSPACE = Path(os.environ.get("ZENOS_WORKSPACE", "."))
 BUILD_IMAGE = "zen-os-build:latest"
 ISO_NAME = "live-image-amd64.hybrid.iso"
 VNC_DISPLAY = os.environ.get("ZENOS_VNC_DISPLAY", ":2")

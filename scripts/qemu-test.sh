@@ -2,7 +2,7 @@
 # ZEN-OS QEMU test launcher
 # Usage: ./scripts/qemu-test.sh [iso_path]
 
-ISO="${1:-/mnt/projects-ssd/ZEN-OS/live-image-amd64.hybrid.iso}"
+ISO="${1:-live-image-amd64.hybrid.iso}"
 OVMF_CODE="/usr/share/edk2/ovmf/OVMF_CODE.fd"
 OVMF_VARS="/tmp/zenos-ovmf-vars.fd"
 SERIAL_LOG="/tmp/zenos-serial.log"
