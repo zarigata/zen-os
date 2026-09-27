@@ -54,7 +54,7 @@ No post-install tinkering. Boot it. Game on it. Build on it.
 | **Security** | Deny-by-default UFW, AppArmor, unattended Debian security upgrades, key-only opt-in SSH |
 | **First-Boot** | Welcome flow with optional Flathub, KDE Connect firewall opt-in, and Security Center |
 | **Daily desktop** | Firefox ESR, KDE Connect, Bluetooth, printing, Flatpak/Discover, power profiles |\n| **Handheld** | Controller udev rules, Steam Big Picture mode, TDP control scripts |
-| **Testing** | Docker package resolution, QEMU boot tests, screenshot analysis, MCP server |
+| **Installer** | Calamares graphical installer + Debian Installer boot path |\n| **Testing** | Docker package resolution, ISO artifact verification, QEMU boot tests, screenshot analysis, MCP server |
 
 ---
 
@@ -87,7 +87,7 @@ sha256sum -c live-image-amd64.hybrid.iso.sha256
 # Linux / macOS
 sudo dd if=live-image-amd64.hybrid.iso of=/dev/sdX bs=4M status=progress && sync
 
-# Or with Ventoy — just drop the ISO on the Ventoy drive
+# Or with Ventoy — copy the ISO to the Ventoy drive\n# If Normal Mode cannot find the live filesystem, use Ventoy GRUB2 mode
 ```
 
 ---
