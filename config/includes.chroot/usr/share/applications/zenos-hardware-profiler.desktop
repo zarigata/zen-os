@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=ZEN-OS Hardware Profiler
-Comment=Scan hardware and get optimization recommendations
-Exec=konsole -e /usr/local/bin/zenos-hardware-profiler
-Icon=zenos-hardware
+Name=ZEN-OS Hardware Information
+Comment=Inspect CPU, GPU, memory, storage and system information
+Exec=/bin/bash /usr/local/lib/zenos/control-center.sh hardware
+Icon=computer
 Type=Application
 Categories=System;Settings;
 Terminal=false
