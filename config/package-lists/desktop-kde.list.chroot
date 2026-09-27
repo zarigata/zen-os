@@ -49,6 +49,12 @@ kwin-x11
 kwin-wayland
 xinit
 
+## Installer
+# Debian's supported Calamares integration provides the desktop launcher,
+# EFI-aware settings and installer wrapper for live images.
+calamares
+calamares-settings-debian
+
 ## Daily-driver essentials
 firefox-esr
 kdeconnect
