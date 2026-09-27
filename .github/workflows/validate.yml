@@ -35,9 +35,8 @@ jobs:
           for hook in config/hooks/live/*.hook.chroot config/hooks/normal/*.hook.chroot; do
             if [ -L "$hook" ]; then
               TARGET=$(readlink "$hook")
-              # Skip symlinks to live-build system hooks (only exist on build host)
               if [[ "$TARGET" == /usr/share/* ]]; then
-                echo "  SKIP: $(basename $hook) (live-build system hook)"
+                echo "  SKIP: $(basename "$hook") (live-build system hook)"
                 continue
               fi
               if [ ! -f "$hook" ]; then
@@ -45,14 +44,12 @@ jobs:
                 continue
               fi
             fi
-            if [ ! -f "$hook" ]; then
-              continue
-            fi
+            [ -f "$hook" ] || continue
             if ! bash -n "$hook" 2>&1; then
               echo "ERROR: Syntax error in $hook"
               ERRORS=$((ERRORS + 1))
             else
-              echo "  OK: $(basename $hook)"
+              echo "  OK: $(basename "$hook")"
             fi
           done
           exit $ERRORS
@@ -96,128 +93,14 @@ jobs:
         run: |
           ERRORS=0
           for list in config/package-lists/*.list.chroot; do
-            if [ ! -f "$list" ]; then
-              continue
-            fi
-            PKG_COUNT=$(grep -vE '^\s*#|^\s*
-      - name: Check os-release fields
-        run: |
-          for field in NAME VERSION ID ID_LIKE PRETTY_NAME VERSION_ID; do
-            if ! grep -q "^${field}=" config/includes.chroot/etc/os-release; then
-              echo "ERROR: Missing field in os-release: $field"
-              exit 1
-            fi
-          done
-          echo "os-release OK"
-          cat config/includes.chroot/etc/os-release
-
-      - name: Check .gitignore covers build artifacts
-        run: |
-          for pattern in "*.iso" "binary/" "chroot/" "cache/" ".build/" "qemu-storage/"; do
-            if ! grep -q "$pattern" .gitignore; then
-              echo "WARN: .gitignore may be missing pattern: $pattern"
-            fi
-          done
-          echo ".gitignore check complete"
-
-      - name: Check for hardcoded paths or personal info
-        run: |
-          ERRORS=0
-          # Check for absolute paths that reference specific machines
-          grep -rn '/home/[a-z]' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null | grep -v '/home/live-user' | grep -v '#.*home' && ERRORS=$((ERRORS+1)) || true
-          grep -rn '/mnt/' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null && ERRORS=$((ERRORS+1)) || true
-          grep -rn '/Users/' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null && ERRORS=$((ERRORS+1)) || true
-          if [ "$ERRORS" -gt 0 ]; then
-            echo "ERROR: Found hardcoded absolute paths. Use relative paths or environment variables."
-            exit 1
-          fi
-          echo "No hardcoded paths found"
-
-  docker-build-test:
-    runs-on: ubuntu-latest
-    name: Docker build image test
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build Docker image
-        run: docker build -t zen-os-build:test -f Dockerfile.build .
-
-      - name: Verify build dependencies
-        run: |
-          docker run --rm zen-os-build:test bash -c "
-            set -e
-            echo 'Checking build dependencies...'
-            which lb && echo '  OK: live-build'
-            which debootstrap && echo '  OK: debootstrap'
-            which xorriso && echo '  OK: xorriso'
-            which mksquashfs && echo '  OK: squashfs-tools'
-            which grub-mkimage && echo '  OK: grub'
-            echo 'All build dependencies present.'
-          "
- "$list" | wc -l)
+            [ -f "$list" ] || continue
+            PKG_COUNT=$(grep -vE '^[[:space:]]*#|^[[:space:]]*$' "$list" | wc -l)
             if [ "$PKG_COUNT" -eq 0 ]; then
-              echo "WARN: Empty package list: $(basename $list)"
+              echo "WARN: Empty package list: $(basename "$list")"
             else
-              echo "  OK: $(basename $list) ($PKG_COUNT packages)"
+              echo "  OK: $(basename "$list") ($PKG_COUNT packages)"
             fi
-            DUPES=$(grep -vE '^\s*#|^\s*
-      - name: Check os-release fields
-        run: |
-          for field in NAME VERSION ID ID_LIKE PRETTY_NAME VERSION_ID; do
-            if ! grep -q "^${field}=" config/includes.chroot/etc/os-release; then
-              echo "ERROR: Missing field in os-release: $field"
-              exit 1
-            fi
-          done
-          echo "os-release OK"
-          cat config/includes.chroot/etc/os-release
-
-      - name: Check .gitignore covers build artifacts
-        run: |
-          for pattern in "*.iso" "binary/" "chroot/" "cache/" ".build/" "qemu-storage/"; do
-            if ! grep -q "$pattern" .gitignore; then
-              echo "WARN: .gitignore may be missing pattern: $pattern"
-            fi
-          done
-          echo ".gitignore check complete"
-
-      - name: Check for hardcoded paths or personal info
-        run: |
-          ERRORS=0
-          # Check for absolute paths that reference specific machines
-          grep -rn '/home/[a-z]' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null | grep -v '/home/live-user' | grep -v '#.*home' && ERRORS=$((ERRORS+1)) || true
-          grep -rn '/mnt/' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null && ERRORS=$((ERRORS+1)) || true
-          grep -rn '/Users/' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null && ERRORS=$((ERRORS+1)) || true
-          if [ "$ERRORS" -gt 0 ]; then
-            echo "ERROR: Found hardcoded absolute paths. Use relative paths or environment variables."
-            exit 1
-          fi
-          echo "No hardcoded paths found"
-
-  docker-build-test:
-    runs-on: ubuntu-latest
-    name: Docker build image test
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build Docker image
-        run: docker build -t zen-os-build:test -f Dockerfile.build .
-
-      - name: Verify build dependencies
-        run: |
-          docker run --rm zen-os-build:test bash -c "
-            set -e
-            echo 'Checking build dependencies...'
-            which lb && echo '  OK: live-build'
-            which debootstrap && echo '  OK: debootstrap'
-            which xorriso && echo '  OK: xorriso'
-            which mksquashfs && echo '  OK: squashfs-tools'
-            which grub-mkimage && echo '  OK: grub'
-            echo 'All build dependencies present.'
-          "
- "$list" | sort | uniq -d || true)
+            DUPES=$(grep -vE '^[[:space:]]*#|^[[:space:]]*$' "$list" | sort | uniq -d || true)
             if [ -n "$DUPES" ]; then
               echo "ERROR: Duplicate packages in $list:"
               echo "$DUPES"
@@ -253,7 +136,6 @@ jobs:
       - name: Check for hardcoded paths or personal info
         run: |
           ERRORS=0
-          # Check for absolute paths that reference specific machines
           grep -rn '/home/[a-z]' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null | grep -v '/home/live-user' | grep -v '#.*home' && ERRORS=$((ERRORS+1)) || true
           grep -rn '/mnt/' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null && ERRORS=$((ERRORS+1)) || true
           grep -rn '/Users/' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null && ERRORS=$((ERRORS+1)) || true
