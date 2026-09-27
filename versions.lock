@@ -21,8 +21,8 @@ distribution = trixie
 
 [kernel]
 # Liquorix gaming-tuned kernel (from packages.chroot/)
-linux-image-7.0.5-1-liquorix-amd64 = 7.0-4.1~trixie
-linux-headers-7.0.5-1-liquorix-amd64 = 7.0-4.1~trixie
+linux-image-7.2.7-1-liquorix-amd64 = 7.2-12.2~trixie
+linux-headers-7.2.7-1-liquorix-amd64 = 7.2-12.2~trixie
 # Debian fallback kernel
 linux-image-6.12.86+deb13-amd64 = 6.12.86-1
 
