@@ -44,8 +44,14 @@ if [ $EXIT_CODE -eq 0 ]; then
     ISO_FILE=$(ls -t live-image-*.hybrid.iso 2>/dev/null | head -1)
     if [ -n "$ISO_FILE" ]; then
         ISO_SIZE=$(du -h "$ISO_FILE" | cut -f1)
-        echo "  BUILD SUCCESS"
-        echo "  ISO: $ISO_FILE ($ISO_SIZE)"
+        echo "  Verifying ISO..."
+        if ! bash "${SCRIPT_DIR}/verify-iso.sh" "$ISO_FILE"; then
+            echo "  ISO VERIFICATION FAILED"
+            EXIT_CODE=1
+        else
+            echo "  BUILD SUCCESS"
+            echo "  ISO: $ISO_FILE ($ISO_SIZE)"
+        fi
     else
         echo "  BUILD SUCCESS (no ISO found)"
     fi

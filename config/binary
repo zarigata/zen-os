@@ -9,14 +9,15 @@ LB_BINARY_FILESYSTEM="ext4"
 # Set apt/aptitude generic indices
 LB_APT_INDICES="false"
 
-# Set boot parameters
-LB_BOOTAPPEND_LIVE="boot=live components locales=en_US.UTF-8 keyboard-layouts=us quiet splash vt.global_cursor_default=0 logo.nologo apparmor=1 security=apparmor"
+# Keep this in sync with auto/config. live-build owns the GRUB menu and inserts
+# the kernel/initrd filenames that were actually produced by the build.
+LB_BOOTAPPEND_LIVE="boot=live components username=live-user hostname=ZEN-OS locales=en_US.UTF-8 keyboard-layouts=us quiet splash vt.global_cursor_default=0 logo.nologo apparmor=1 security=apparmor"
 
 # Set boot parameters
 LB_BOOTAPPEND_INSTALL=""
 
 # Set boot parameters
-LB_BOOTAPPEND_LIVE_FAILSAFE="boot=live components memtest noapic noapm nodma nomce nosmp nosplash vga=788"
+LB_BOOTAPPEND_LIVE_FAILSAFE="boot=live components username=live-user hostname=ZEN-OS memtest noapic noapm nodma nomce nosmp nosplash vga=788"
 
 # Set BIOS bootloader
 LB_BOOTLOADER_BIOS=""
@@ -80,7 +81,7 @@ LB_ISO_PREPARER="live-build @LB_VERSION@; https://salsa.debian.org/live-team/liv
 LB_ISO_PUBLISHER="ZEN-OS Project"
 
 # Set iso volume (max 32 chars)
-LB_ISO_VOLUME="ZEN-OS 20260528"
+LB_ISO_VOLUME="ZEN-OS"
 
 # Set jffs2 eraseblock size
 LB_JFFS2_ERASEBLOCK=""

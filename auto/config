@@ -2,7 +2,11 @@
 set -e
 
 # ZEN-OS live-build configuration
-# This is the nerve center of the build
+# This is the nerve center of the build.
+#
+# IMPORTANT: Do not hard-code kernel filenames in config/includes.binary/boot/grub.
+# live-build generates boot entries from the kernels actually present in the image,
+# keeping Liquorix/Debian updates and Debian Installer entries in sync automatically.
 
 lb config noauto \
     --mode debian \
@@ -12,7 +16,7 @@ lb config noauto \
     --binary-images iso-hybrid \
     --binary-filesystem ext4 \
     --bootloaders grub-efi \
-    --bootappend-live "boot=live components locales=en_US.UTF-8 keyboard-layouts=us quiet splash vt.global_cursor_default=0 logo.nologo apparmor=1 security=apparmor" \
+    --bootappend-live "boot=live components username=live-user hostname=ZEN-OS locales=en_US.UTF-8 keyboard-layouts=us quiet splash vt.global_cursor_default=0 logo.nologo apparmor=1 security=apparmor" \
     --debian-installer live \
     --debian-installer-gui true \
     --archive-areas "main contrib non-free non-free-firmware" \
