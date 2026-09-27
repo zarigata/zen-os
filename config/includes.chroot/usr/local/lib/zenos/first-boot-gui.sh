@@ -29,4 +29,4 @@ if kdialog --title "ZEN-OS Security" --yesno "Open the ZEN-OS Security Center no
 fi
 
 touch "$MARKER"
-kdialog --title "ZEN-OS Ready" --passivepopup "ZEN-OS setup complete. Firefox, Discover, Bluetooth, printing and power profiles are ready to use." 6
+kdialog --title "ZEN-OS Ready" --passivepopup "ZEN-OS setup complete. Use ZEN-OS Doctor for diagnostics and Update Center for system, Flatpak and firmware maintenance." 8
