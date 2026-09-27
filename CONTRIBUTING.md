@@ -1,194 +1,165 @@
 # Contributing to ZEN-OS
 
-Thank you for your interest in contributing to ZEN-OS! This document covers everything you need to know.
+Thanks for helping improve ZEN-OS. The highest-value contributions are reproducible fixes and real-hardware reports.
 
----
-
-## Quick Start
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Make your changes
-4. Test your changes: `make build` or at minimum `make test-docker`
-5. Commit with a descriptive message
-6. Open a Pull Request
-
----
-
-## Project Structure Conventions
-
-### Package Lists (`config/package-lists/`)
-
-Each file is a curated list of packages, one per line, with comments for sections.
+## Quick start
 
 ```bash
-## Category — Brief Description
-package-name
-another-package
+git clone https://github.com/zarigata/zen-os.git
+cd zen-os
+git checkout -b fix/my-change
+make test-all
 ```
 
-**Rules**:
-- One package per line
-- Use `##` for section headers
-- Packages that require i386 go in `00-multiarch.hook.chroot`, NOT in package lists
-- Never add packages that conflict with existing ones (test with `make test-docker`)
-- Keep lists focused — one category per file
-
-### Hooks (`config/hooks/live/`)
-
-Hooks are bash scripts that run during the build process inside the chroot.
-
-**Naming convention**: `NN-description.hook.chroot` where `NN` is a two-digit priority number.
-
-| Range | Purpose |
-|-------|---------|
-| 00-09 | Architecture, repo setup |
-| 10-19 | Service enablement |
-| 20-29 | System configuration |
-| 30-39 | Theming, branding |
-| 40-89 | Optional features |
-| 90-99 | Cleanup, finalization |
-
-**Rules**:
-- Always start with `#!/bin/bash` and `set -e`
-- Use `echo "ZEN-OS: Doing X..."` for build log visibility
-- Use `|| true` for commands that may fail in Docker but succeed in real builds
-- Never modify files owned by live-build itself
-- Keep hooks idempotent — safe to run multiple times
-
-### Included Files (`config/includes.chroot/`)
-
-Files placed here are overlaid onto the target filesystem during build. The directory structure mirrors the target system:
-
-```
-config/includes.chroot/
-├── etc/
-│   ├── os-release           # → /etc/os-release
-│   ├── sysctl.d/            # → /etc/sysctl.d/
-│   └── sddm.conf.d/         # → /etc/sddm.conf.d/
-├── usr/
-│   ├── share/               # → /usr/share/ (themes, icons, wallpapers)
-│   └── local/bin/           # → /usr/local/bin/ (custom scripts)
-└── home/                    # → /home/ (default user config)
-```
-
-**Rules**:
-- Never include secrets, keys, or credentials
-- Use proper file permissions (scripts must be executable)
-- Prefer hooks over included files for configuration that requires variable substitution
-
----
-
-## Testing Your Changes
-
-### Mandatory: Docker Package Test
-
-Before submitting any package list or hook changes:
-
-```bash
-make test-docker
-```
-
-This verifies all packages resolve without conflicts.
-
-### Recommended: Full Build Test
-
-If you changed hooks, includes, or the build configuration:
+After changing build configuration, hooks, packages or files shipped into the ISO, a full local build is strongly recommended:
 
 ```bash
 make build
+make test-iso
 ```
 
-Then boot the ISO:
+## Repository layout
+
+- `config/package-lists/` — Debian packages intended for the live image
+- `config/hooks/live/` — scripts executed inside the target chroot during live-build
+- `config/includes.chroot/` — files copied into the live/installed filesystem
+- `config/includes.chroot/usr/local/lib/zenos/` — ZEN-OS desktop/maintenance scripts
+- `scripts/` — build and validation tooling
+- `docs/` — GitHub Pages website
+- `mcp-server/` — optional AI-assisted build/test tooling
+
+## Package changes
+
+Keep package lists simple: one package name per line and comments beginning with `#`.
+
+Before opening a PR:
 
 ```bash
-./scripts/test-vm.sh --docker
+make test-preflight
 ```
 
-### Smoke Test
+The preflight uses Debian Trixie repositories and performs both package-name checks and a combined simulated install. A package that exists individually can still break the combined dependency set, so both checks matter.
+
+Packages requiring special multiarch sequencing belong in the relevant build hook rather than being dropped blindly into a normal package list.
+
+## Build hooks
+
+Hooks should:
+
+- use a shell shebang
+- use strict error handling when failure should stop the image build
+- be idempotent where practical
+- log meaningful ZEN-OS-prefixed messages
+- avoid hardcoded personal paths
+- avoid hiding required-package failures behind unconditional `|| true`
+
+Optional hardware-specific behavior may fail gracefully, but required build inputs should fail loudly.
+
+## Shipped ZEN-OS tools
+
+Custom tools live under:
+
+```
+config/includes.chroot/usr/local/lib/zenos/
+```
+
+Desktop launchers live under:
+
+```
+config/includes.chroot/usr/share/applications/
+```
+
+CI checks that ZEN-OS launchers do not point at missing scripts.
+
+When adding a tool:
+
+1. add the script
+2. add a launcher if it is user-facing
+3. integrate it into Control Center when appropriate
+4. document it in README/USER_GUIDE
+5. ensure it works without embedding credentials or machine-specific paths
+
+## Testing levels
+
+### Required for every PR
 
 ```bash
-./scripts/smoke-test.sh
+make test-all
 ```
 
----
+This covers static repository checks and package/dependency resolution.
 
-## Commit Messages
+### Required for release/build changes
 
-Use clear, descriptive commit messages:
-
-```
-category: brief description
-
-Optional longer description explaining the why.
+```bash
+make build
+make test-iso
 ```
 
-Examples:
-```
-packages: add octave-signal and octave-image to sim-native
+The ISO verifier checks image structure, boot payload and key ZEN-OS files inside squashfs.
 
-hooks: fix SDDM session detection for Plasma 6 Wayland
+### Recommended for desktop/boot changes
 
-theme: update GRUB theme colors to match ZEN-OS palette
-
-fix: resolve i386 multiarch ordering issue with Steam
+```bash
+./scripts/test-vm.sh --web
 ```
 
----
+Then test the actual behavior in the VM.
 
-## Areas That Need Help
+Real-hardware testing is especially valuable for GPU drivers, Wi-Fi/Bluetooth, suspend/resume, audio, controllers and installers.
 
-### High Priority
-- **Theme refinement**: GRUB, Plymouth, SDDM, and KDE Plasma theming
-- **Handheld testing**: Real Steam Deck / ROG Ally / Legion Go testing
-- **Documentation**: User guides, installation instructions
+## Bug reports
 
-### Medium Priority
-- **Translation**: i18n for the first-boot wizard
-- **Testing**: Expanding the QEMU test suite
-- **Package versioning**: Automated version bump detection
+Use the GitHub bug-report form:
 
-### Nice to Have
-- **GNOME edition**: Alternative desktop config (Phase 9)
-- **CI/CD**: GitHub Actions for automated builds
-- **Custom APT repo**: Hosting custom ZEN-OS packages
+https://github.com/zarigata/zen-os/issues/new/choose
 
----
+Please include:
 
-## Reporting Issues
+- exact Git commit or release
+- live session vs installed system
+- CPU/GPU and machine model
+- exact reproduction steps
+- expected vs actual behavior
+- relevant logs
+- a ZEN-OS Doctor report when possible
 
-### Bug Reports
+Generate a report with:
 
-Use the [Bug Report template](https://github.com/zen-os/zen-os/issues/new?template=bug_report.md). Include:
+```bash
+/usr/local/lib/zenos/doctor.sh report
+```
 
-1. ZEN-OS version (from `cat /etc/os-release`)
-2. Hardware (GPU, CPU, laptop/desktop/handheld)
-3. What you expected to happen
-4. What actually happened
-5. Relevant logs (`journalctl -b`, `dmesg`, serial output)
+Remove anything you consider sensitive before posting.
 
-### Feature Requests
+## Pull requests
 
-Use the [Feature Request template](https://github.com/zen-os/zen-os/issues/new?template=feature_request.md). Describe:
+Prefer focused PRs. Explain:
 
-1. The use case (who benefits and how)
-2. Suggested implementation (if you have ideas)
-3. Whether you're willing to help implement it
+- what problem is being solved
+- what changed
+- how it was tested
+- whether it changes packages, boot, security or networking
+- hardware used for testing, if applicable
 
----
+Do not mark hardware behavior “supported” solely because it worked in a container or static package test.
 
-## Code of Conduct
+## Security issues
 
-Be respectful. Be constructive. We're all here to make a great OS.
+Do not publish an exploitable vulnerability in a normal issue. Follow [SECURITY.md](SECURITY.md) and use private vulnerability reporting.
 
-- Use welcoming and inclusive language
-- Be respectful of differing viewpoints
-- Accept constructive criticism gracefully
-- Focus on what's best for the community
-- Show empathy toward other community members
+## Documentation standard
 
----
+ZEN-OS documentation should distinguish:
+
+- **implemented**
+- **validated in CI**
+- **validated in a VM**
+- **validated on physical hardware**
+- **planned**
+
+Avoid advertising planned tools as already shipped.
 
 ## License
 
-By contributing to ZEN-OS, you agree that your contributions will be licensed under the [GPL-3.0 License](LICENSE).
+By contributing, you agree that your contribution is distributed under the repository license and that third-party package licenses remain their own.
