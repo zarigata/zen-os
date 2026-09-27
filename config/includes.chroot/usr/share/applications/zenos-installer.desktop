@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Install ZEN-OS
+Comment=Install ZEN-OS to this computer
+Exec=/usr/bin/calamares-install-debian
+Icon=install-debian
+Categories=System;
+Terminal=false
+StartupNotify=true
+Keywords=install;installer;system;disk;
