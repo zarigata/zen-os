@@ -2,6 +2,16 @@ name: Full ISO Health
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "Dockerfile.build"
+      - "Makefile"
+      - "versions.lock"
+      - "auto/**"
+      - "config/**"
+      - "scripts/**"
+      - ".github/workflows/iso-health.yml"
   schedule:
     - cron: "17 5 * * 0"
   pull_request:
