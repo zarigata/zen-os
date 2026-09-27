@@ -167,3 +167,5 @@ jobs:
             which grub-mkimage && echo '  OK: grub'
             echo 'All build dependencies present.'
           "
+      - name: Resolve ISO package set
+        run: docker run --rm zen-os-build:test bash scripts/package-preflight.sh
