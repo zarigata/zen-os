@@ -1,15 +1,14 @@
 #!/bin/bash
-set -e
+# Install the 32-bit userspace required by Steam, Wine and Proton.
+set -euo pipefail
+export DEBIAN_FRONTEND=noninteractive
 
-# Enable i386 multiarch for 32-bit game support (Proton, Wine, Steam)
+echo "ZEN-OS: Enabling i386 multiarch for Steam/Wine..."
 dpkg --add-architecture i386
-
-# Update package lists to include i386 packages
 apt-get update
 
-# Install packages that require i386 architecture
-# These CANNOT go in package lists because live-build installs packages
-# BEFORE running hooks — i386 isn't available during package install phase
+# These packages are installed after dpkg gains the i386 architecture. They are
+# release-critical: a gaming image must not silently succeed without them.
 apt-get install -y --no-install-recommends \
     steam-installer \
     wine wine64 wine32 \
@@ -17,5 +16,13 @@ apt-get install -y --no-install-recommends \
     mesa-vulkan-drivers:i386 \
     libvulkan1:i386 \
     libglx-mesa0:i386 \
-    libegl-mesa0:i386 \
-    || echo "WARNING: Some i386 packages failed to install"
+    libegl-mesa0:i386
+
+for pkg in steam-installer wine wine64 wine32 libvulkan1:i386 mesa-vulkan-drivers:i386; do
+    dpkg-query -W -f='${db:Status}\n' "$pkg" 2>/dev/null | grep -qx 'install ok installed' || {
+        echo "ERROR: Required gaming package was not installed: $pkg" >&2
+        exit 1
+    }
+done
+
+echo "ZEN-OS: Steam/Wine 32-bit runtime installed."
