@@ -96,7 +96,7 @@ sudo dd if=live-image-amd64.hybrid.iso of=/dev/sdX bs=4M status=progress && sync
 # Replace /dev/sdX with your USB drive (use lsblk to find it)
 ```
 
-**Or use [Ventoy](https://www.ventoy.net/)** — just copy the ISO file onto a Ventoy-formatted USB drive. No dd needed.
+**Or use [Ventoy](https://www.ventoy.net/)** — copy the ISO to the Ventoy drive. If a machine reports `Unable to find a medium containing a live file system` in Ventoy Normal Mode, retry that ISO with Ventoy **GRUB2 mode**.
 
 ### Step 5: Boot It
 
@@ -104,6 +104,7 @@ sudo dd if=live-image-amd64.hybrid.iso of=/dev/sdX bs=4M status=progress && sync
 2. Enter BIOS/UEFI boot menu (usually F12, F2, or Del)
 3. Select the USB drive
 4. ZEN-OS boots into a live KDE Plasma desktop
+5. To install, open **Install ZEN-OS** from the application menu
 
 ---
 
@@ -193,7 +194,7 @@ The ISO contains:
 
 - **Debian Trixie** base system
 - **KDE Plasma** desktop with ZEN-OS custom theme
-- **Liquorix 7.0.5** gaming-tuned kernel
+- **Liquorix 7.2.7** gaming-tuned kernel
 - **Steam, Wine 10.0, DXVK** gaming stack
 - **FreeCAD, KiCad, Docker, Jupyter** engineering tools
 - **PipeWire** low-latency audio
