@@ -1,0 +1,87 @@
+name: Full ISO Health
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "Dockerfile.build"
+      - "Makefile"
+      - "versions.lock"
+      - "auto/**"
+      - "config/**"
+      - "scripts/**"
+      - ".github/workflows/iso-health.yml"
+  schedule:
+    - cron: "17 5 * * 0"
+  pull_request:
+    branches: [main]
+    paths:
+      - "Dockerfile.build"
+      - "Makefile"
+      - "versions.lock"
+      - "auto/**"
+      - "config/**"
+      - "scripts/**"
+      - ".github/workflows/iso-health.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: iso-health-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    name: Build and inspect ZEN-OS ISO
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reclaim runner disk
+        run: |
+          echo "Disk before cleanup:"
+          df -h /
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          docker system prune -af || true
+          echo "Disk after cleanup:"
+          df -h /
+
+      - name: Build ISO
+        run: make build
+
+      - name: Inspect ISO contents
+        run: make test-iso
+
+      - name: Generate checksums
+        run: bash scripts/release-artifacts.sh
+
+      - name: Build summary
+        run: |
+          ISO=$(ls -t live-image-*.hybrid.iso | head -n1)
+          echo "### ZEN-OS ISO health" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ISO: `$ISO`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Size: `$(du -h "$ISO" | cut -f1)`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- SHA-256: `$(cut -d' ' -f1 "$ISO.sha256")`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Static image inspection: **passed**" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "This job validates image construction and contents. Physical GPU, Wi-Fi, suspend and installer behavior still require VM/real-hardware testing." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload build evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zenos-iso-health-${{ github.sha }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            build-*.log
+            live-image-*.hybrid.iso.sha256
+            live-image-*.hybrid.iso.sha512
+
+      - name: Final disk report
+        if: always()
+        run: df -h /

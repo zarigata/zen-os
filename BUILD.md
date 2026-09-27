@@ -1,23 +1,19 @@
-# Building ZEN-OS from Source
+# Building ZEN-OS
 
-A step-by-step guide to build the ZEN-OS ISO on your machine. No prior Linux distribution building experience needed.
+This guide describes the build path that matches the current repository.
 
----
+## Requirements
 
-## What You'll Need
+| Requirement | Recommendation |
+|---|---|
+| Host | Linux is easiest; Docker Desktop/WSL2 can also work |
+| Docker | Current Docker with privileged containers available |
+| Disk | At least 25 GB free; more is safer |
+| RAM | 8 GB recommended |
+| Internet | Required for Debian and Liquorix packages |
+| Architecture | Build output is amd64 |
 
-| Requirement | Details |
-|-------------|---------|
-| **Operating System** | Any OS that runs Docker (Linux, macOS, Windows with WSL2) |
-| **Docker** | [Install Docker](https://docs.docker.com/get-docker/) — must support `--privileged` mode |
-| **Disk space** | ~20 GB free |
-| **RAM** | 4 GB minimum |
-| **Time** | 15-45 minutes (mostly downloading packages) |
-| **Internet** | Required during build (downloads ~3 GB of Debian packages) |
-
----
-
-## Quick Start (3 commands)
+## Standard build
 
 ```bash
 git clone https://github.com/zarigata/zen-os.git
@@ -25,193 +21,152 @@ cd zen-os
 make build
 ```
 
-When it finishes, you'll find the ISO at `live-image-amd64.hybrid.iso`.
+The Makefile builds `Dockerfile.build`, runs the live-build pipeline in a privileged container, and writes `live-image-amd64.hybrid.iso` in the repository root.
 
-That's it. Read on for details, troubleshooting, and alternative methods.
+The build currently pins Liquorix:
 
----
+- kernel version: **7.2.7-1**
+- package release: **7.2-12.2~trixie**
 
-## Step-by-Step Walkthrough
+The exact pin is recorded in `versions.lock` and `scripts/fetch-kernel.sh`.
 
-### Step 1: Install Docker
+## Preflight checks
 
-**Linux (Debian/Ubuntu):**
-```bash
-sudo apt install docker.io
-sudo usermod -aG docker $USER
-# Log out and back in for group change to take effect
-```
-
-**Linux (Fedora):**
-```bash
-sudo dnf install docker
-sudo systemctl enable --now docker
-sudo usermod -aG docker $USER
-```
-
-**macOS:**
-Download [Docker Desktop](https://www.docker.com/products/docker-desktop/) and install it.
-
-**Windows:**
-Enable WSL2, then install [Docker Desktop](https://www.docker.com/products/docker-desktop/) with WSL2 backend.
-
-### Step 2: Clone the Repository
+Before spending time on a full ISO build:
 
 ```bash
-git clone https://github.com/zarigata/zen-os.git
-cd zen-os
+make test-all
 ```
 
-### Step 3: Build the ISO
+This runs real repository/static checks plus a Debian Trixie package-resolution simulation.
+
+You can run just the package check with:
 
 ```bash
-make build
+make test-preflight
 ```
 
-This does three things automatically:
-1. **Fetches the Liquorix kernel** (~128 MB download from liquorix.net)
-2. **Builds the Docker image** (`zen-os-build:latest`) with all build tools
-3. **Runs the full live-build pipeline** inside Docker
+## Build steps
 
-You'll see progress output like:
-```
-[0/3] Fetching kernel packages...
-[1/3] Cleaning previous build...
-[2/3] Running lb config...
-[3/3] Running lb build (this takes 15-45 minutes)...
+`scripts/build.sh` performs:
 
-==========================================
-  BUILD SUCCESS
-  ISO: live-image-amd64.hybrid.iso (4.7G)
-  Duration: 28m 39s
-==========================================
-```
+1. fetch the pinned Liquorix kernel packages
+2. clean previous live-build state
+3. run `lb config`
+4. run `lb build`
+5. report the generated ISO and build log
 
-### Step 4: Write to USB
+A failed Liquorix download is treated as a hard failure so stale kernel packages cannot silently survive into the build.
+
+## Verify the resulting ISO
+
+Do not treat “`lb build` returned zero” as the only release check.
 
 ```bash
-# Linux / macOS
-sudo dd if=live-image-amd64.hybrid.iso of=/dev/sdX bs=4M status=progress && sync
-
-# Replace /dev/sdX with your USB drive (use lsblk to find it)
+make test-iso
 ```
 
-**Or use [Ventoy](https://www.ventoy.net/)** — just copy the ISO file onto a Ventoy-formatted USB drive. No dd needed.
+The verifier checks:
 
-### Step 5: Boot It
+- ISO exists and is a plausible size
+- ISO9660 structure can be read
+- squashfs live filesystem exists
+- GRUB/EFI boot content exists
+- selected package-manifest entries
+- ZEN-OS Control Center, Security Center, Doctor and Update Center are present in squashfs
+- OS identity is present
 
-1. Insert USB into target machine
-2. Enter BIOS/UEFI boot menu (usually F12, F2, or Del)
-3. Select the USB drive
-4. ZEN-OS boots into a live KDE Plasma desktop
-
----
-
-## Alternative: Build Without Docker
-
-If you're already running Debian Trixie (or Ubuntu 24.04+):
+Then generate release checksums:
 
 ```bash
-sudo apt install live-build debootstrap squashfs-tools xorriso \
-    grub-pc-bin grub-efi-amd64-bin grub-efi-amd64-signed \
-    shim-signed ovmf dosfstools mtools syslinux-common isolinux
-
-make build-native
+make release
 ```
 
----
+This writes SHA-256 and SHA-512 checksum files next to the ISO.
 
-## Other Make Targets
+## VM test
 
-```bash
-make build          # Full build (Docker) — the standard way
-make build-native   # Build without Docker (Debian host only)
-make clean          # Remove build artifacts (keeps Docker image)
-make distclean      # Remove everything including Docker image
-make test-all       # Run automated test suites
-make release        # Prepare release artifacts (checksums, split ISO)
-```
+Native QEMU/noVNC:
 
----
-
-## Testing the ISO
-
-Before installing on real hardware, test in a VM:
-
-```bash
-# Easiest way — Docker-based QEMU with web viewer:
-./scripts/test-vm.sh --docker
-
-# Then open http://localhost:8006 in your browser
-```
-
-Or with native QEMU:
 ```bash
 ./scripts/test-vm.sh --web
 ```
 
----
+Docker QEMU mode:
+
+```bash
+./scripts/test-vm.sh --docker
+```
+
+The VM tooling requires a built ISO. Some environments, especially hosted CI runners, do not expose KVM and are therefore not equivalent to a local hardware-accelerated VM.
+
+## Native Debian build
+
+A native Trixie host can run:
+
+```bash
+make build-native
+```
+
+Docker remains the preferred path because it reduces differences between build hosts.
 
 ## Troubleshooting
 
-### "Permission denied" from Docker
-```bash
-sudo usermod -aG docker $USER
-# Log out and back in
-```
+### Liquorix package failure
 
-### Build fails with package download errors
-The build downloads packages from Debian mirrors. If it fails:
-1. Check your internet connection
-2. Re-run `make build` — it's safe to re-run, will pick up where it left off
-3. If a specific package fails, check [Debian package status](https://packages.debian.org/)
+If a kernel package has disappeared from the Liquorix pool, update **both** `versions.lock` and `scripts/fetch-kernel.sh` to a Trixie-compatible release. Do not leave older Liquorix .deb files in `config/packages.chroot/`.
 
-### "No space left on device"
-The build needs ~20 GB. Check with `df -h`. Clean up with `make clean`.
+The fetch script removes stale Liquorix packages before downloading the pinned set.
 
-### Docker build fails
-```bash
-# Remove old build image and retry
-docker rmi zen-os-build:latest
-make build
-```
+### Package cannot be installed
 
-### ISO won't boot
-- Make sure you selected **UEFI boot** (not Legacy/BIOS)
-- Try re-writing the USB with `dd` (some tools corrupt the image)
-- Verify the ISO checksum:
-  ```bash
-  sha256sum live-image-amd64.hybrid.iso
-  # Should match the checksum in the release notes
-  ```
-
----
-
-## What Gets Built
-
-The ISO contains:
-
-- **Debian Trixie** base system
-- **KDE Plasma** desktop with ZEN-OS custom theme
-- **Liquorix 7.0.5** gaming-tuned kernel
-- **Steam, Wine 10.0, DXVK** gaming stack
-- **FreeCAD, KiCad, Docker, Jupyter** engineering tools
-- **PipeWire** low-latency audio
-- **UFW firewall + AppArmor** security
-- **First-boot wizard** for hardware setup
-
-All configured, all themed, all ready to use.
-
----
-
-## Clean Up After Build
+Run:
 
 ```bash
-# Remove build artifacts (ISO is kept)
-make clean
-
-# Remove everything including Docker image (~2 GB)
-make distclean
+make test-preflight
 ```
 
-The ISO file (`live-image-amd64.hybrid.iso`) is kept after clean.
+This will identify package names that are missing or whose combined dependency set cannot be solved against Debian Trixie.
+
+### Docker permission denied
+
+On Debian/Ubuntu hosts:
+
+```bash
+sudo usermod -aG docker "$USER"
+```
+
+Log out and back in before retrying.
+
+### No space left
+
+Live-build uses substantial temporary space. Check both the repository filesystem and Docker storage:
+
+```bash
+df -h
+docker system df
+```
+
+Use `make clean` to remove live-build state and `make distclean` if the build image also needs to be removed.
+
+### ISO boots but desktop fails
+
+Collect:
+
+```bash
+journalctl -b -p warning
+systemctl --failed
+/usr/local/lib/zenos/doctor.sh report
+```
+
+Attach the Doctor report to a GitHub issue.
+
+## Writing to USB
+
+After verifying the checksum, write the ISO with a trusted imaging tool or Ventoy. With `dd`, triple-check the destination device before writing:
+
+```bash
+sudo dd if=live-image-amd64.hybrid.iso of=/dev/sdX bs=4M status=progress conv=fsync
+```
+
+The target device is overwritten.

@@ -35,7 +35,7 @@ libdvdnav4
 
 # Image support
 imagemagick
- feh
+feh
 gthumb
 
 # Fonts

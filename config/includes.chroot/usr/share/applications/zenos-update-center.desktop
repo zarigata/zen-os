@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ZEN-OS Update Center
+Comment=Update Debian packages, Flatpaks and supported device firmware
+Exec=konsole -e /bin/bash /usr/local/lib/zenos/update-center.sh menu
+Icon=system-software-update
+Type=Application
+Categories=System;Settings;
+Terminal=false
+X-KDE-StartupNotify=true

@@ -5,6 +5,8 @@ ACTION="${1:-menu}"
 SELF="/usr/local/lib/zenos/control-center.sh"
 
 security() { konsole -e /bin/bash /usr/local/lib/zenos/security.sh menu >/dev/null 2>&1 & }
+doctor() { konsole -e /bin/bash /usr/local/lib/zenos/doctor.sh interactive >/dev/null 2>&1 & }
+updates() { konsole -e /bin/bash /usr/local/lib/zenos/update-center.sh menu >/dev/null 2>&1 & }
 settings() { systemsettings >/dev/null 2>&1 & }
 software() { plasma-discover >/dev/null 2>&1 & }
 hardware() { kinfocenter >/dev/null 2>&1 & }
@@ -24,7 +26,7 @@ performance() {
 }
 
 menu() {
-    choice="$(kdialog --title 'ZEN-OS Control Center' --menu 'Choose a section' security 'Security & Network' performance 'Performance Profiles' games 'Game Hub' software 'Software Center' hardware 'Hardware Information' settings 'KDE System Settings' 2>/dev/null || true)"
+    choice="$(kdialog --title 'ZEN-OS Control Center' --menu 'Choose a section' doctor 'System Doctor & Diagnostics' updates 'Update Center' security 'Security & Network' performance 'Performance Profiles' games 'Game Hub' software 'Software Center' hardware 'Hardware Information' settings 'KDE System Settings' 2>/dev/null || true)"
     [ -n "$choice" ] || exit 0
     "$choice"
 }
@@ -32,6 +34,8 @@ menu() {
 case "$ACTION" in
     menu) menu ;;
     security) security ;;
+    doctor) doctor ;;
+    updates) updates ;;
     performance) performance ;;
     games) games ;;
     software) software ;;
