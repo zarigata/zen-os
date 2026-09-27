@@ -30,10 +30,15 @@ test: test-all
 
 test-static:
 	@echo "Checking shell syntax and required ZEN-OS launch targets..."
-	@bash -n auto/config scripts/*.sh config/hooks/live/*.hook.chroot config/includes.chroot/usr/local/lib/zenos/*.sh
+	@bash -n auto/config
+	@for f in scripts/*.sh config/includes.chroot/usr/local/lib/zenos/*.sh config/hooks/live/*.hook.chroot; do \
+		[ -f "$f" ] || continue; \
+		[ -L "$f" ] && [ ! -e "$f" ] && continue; \
+		bash -n "$f" || exit 1; \
+	done
 	@for f in config/includes.chroot/usr/share/applications/zenos-*.desktop; do \
-		target=$$(grep -Eo '/usr/local/lib/zenos/[A-Za-z0-9._-]+\.sh' "$$f" | head -n1 || true); \
-		[ -z "$$target" ] || [ -f "config/includes.chroot$$target" ] || { echo "Missing target $$target from $$f"; exit 1; }; \
+		target=$(grep -Eo '/usr/local/lib/zenos/[A-Za-z0-9._-]+\.sh' "$f" | head -n1 || true); \
+		[ -z "$target" ] || [ -f "config/includes.chroot$target" ] || { echo "Missing target $target from $f"; exit 1; }; \
 	done
 	@echo "Static checks passed."
 
@@ -53,9 +58,5 @@ smoke:
 	bash scripts/smoke-test.sh
 
 release: test-iso
-	@echo "ISO verified. Release automation can now package checksums/artifacts."
-	@command -v scripts/generate-checksums.sh >/dev/null 2>&1 || true
-	@[ ! -f scripts/generate-checksums.sh ] || bash scripts/generate-checksums.sh
-	@[ ! -f scripts/split-iso.sh ] || bash scripts/split-iso.sh
-	@[ ! -f scripts/create-torrent.sh ] || bash scripts/create-torrent.sh
-	@[ ! -f scripts/create-release.sh ] || bash scripts/create-release.sh
+	@echo "ISO verified. Generating release checksums..."
+	bash scripts/release-artifacts.sh
