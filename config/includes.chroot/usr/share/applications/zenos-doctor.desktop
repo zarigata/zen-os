@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ZEN-OS Doctor
+Comment=Check graphics, gaming, security, packages, storage and hardware health
+Exec=konsole -e /bin/bash /usr/local/lib/zenos/doctor.sh interactive
+Icon=tools-report-bug
+Type=Application
+Categories=System;Settings;
+Terminal=false
+X-KDE-StartupNotify=true
