@@ -15,7 +15,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Base-Debian%20Trixie%20(13)-A80030?style=flat-square&logo=debian" alt="Debian Trixie"/>
   <img src="https://img.shields.io/badge/Desktop-KDE%20Plasma-1D99F3?style=flat-square&logo=kde" alt="KDE Plasma"/>
-  <img src="https://img.shields.io/badge/Kernel-Liquorix%207.0-00C853?style=flat-square" alt="Liquorix Kernel"/>
+  <img src="https://img.shields.io/badge/Kernel-Liquorix%207.2.7-00C853?style=flat-square" alt="Liquorix Kernel"/>
   <img src="https://img.shields.io/badge/Arch-AMD64%20(x86__64)-0078D4?style=flat-square" alt="AMD64"/>
   <img src="https://img.shields.io/badge/License-GPL--3.0-blue?style=flat-square" alt="GPL-3.0"/>
   <img src="https://img.shields.io/badge/Status-Phase%201%20Complete-brightgreen?style=flat-square" alt="Status"/>
@@ -35,7 +35,7 @@ No post-install tinkering. Boot it. Game on it. Build on it.
 
 - **Batteries included** — Gaming stack, engineering tools, codecs, and firmware pre-installed
 - **Hardware-agnostic** — AMD, NVIDIA, and Intel GPUs all supported equally
-- **Pragmatic security** — AppArmor + UFW + auto-updates. Not a fortress, not a free-for-all
+- **Secure desktop defaults** — deny-by-default UFW, AppArmor, automatic Debian security updates, opt-in remote services
 - **Reproducible builds** — Docker-based build pipeline with version-locked packages
 - **Handheld-ready** — Steam Deck, ROG Ally, and other handheld gaming PCs supported
 
@@ -46,14 +46,14 @@ No post-install tinkering. Boot it. Game on it. Build on it.
 | Category | What's Included |
 |----------|----------------|
 | **Desktop** | KDE Plasma with custom ZEN-OS teal theme, SDDM login, Plymouth splash |
-| **Kernel** | Liquorix 7.0.5 (gaming-tuned) + Debian 6.12 fallback |
+| **Kernel** | Liquorix 7.2.7 (gaming-tuned) + Debian 6.12 fallback |
 | **GPU Drivers** | AMD (Mesa Vulkan), Intel (ANV), NVIDIA (post-install wizard) |
 | **Gaming** | Steam, Wine 10.0, DXVK, MangoHud, GameMode, vkBasalt, Gamescope |
 | **Engineering** | FreeCAD, KiCad, OpenSCAD, GNU Radio, Octave, Jupyter, Docker |
 | **Audio** | PipeWire + WirePlumber with low-latency gaming profile |
-| **Security** | UFW firewall, AppArmor, unattended security upgrades, SSH hardening |
-| **First-Boot** | Welcome wizard: hardware detect, NVIDIA driver install, Flatpak app selector |
-| **Handheld** | Controller udev rules, Steam Big Picture mode, TDP control scripts |
+| **Security** | Deny-by-default UFW, AppArmor, unattended Debian security upgrades, key-only opt-in SSH |
+| **First-Boot** | Welcome flow with optional Flathub, KDE Connect firewall opt-in, and Security Center |
+| **Daily desktop** | Firefox ESR, KDE Connect, Bluetooth, printing, Flatpak/Discover, power profiles |\n| **Handheld** | Controller udev rules, Steam Big Picture mode, TDP control scripts |
 | **Testing** | Docker package resolution, QEMU boot tests, screenshot analysis, MCP server |
 
 ---
@@ -187,8 +187,8 @@ ZEN-OS organizes software into focused package lists. Each file in `config/packa
 
 | File | Purpose |
 |------|---------|
-| `base.list.chroot` | Core system: systemd, sudo, network-manager, UFW, AppArmor, Flatpak |
-| `desktop-kde.list.chroot` | Full KDE Plasma desktop with SDDM, Dolphin, Konsole, Kvantum |
+| `base.list.chroot` | Core system: systemd, sudo, NetworkManager, UFW, AppArmor, unattended security updates, Flatpak |
+| `desktop-kde.list.chroot` | KDE Plasma plus Firefox ESR, KDE Connect, Bluetooth, printing, portals and power profiles |
 | `gaming-platforms.list.chroot` | Steam, Wine, MangoHud, GameMode, DXVK, vkBasalt, GOverlay |
 | `gpu-drivers.list.chroot` | Mesa Vulkan (AMD/Intel), NVIDIA detect, Vulkan tools |
 | `dev-core.list.chroot` | Build tools, Python, Node.js, Rust, Docker, QEMU, Wireshark |
@@ -214,8 +214,8 @@ Hooks run at specific points during the live-build process to configure the syst
 | `05-gamemode.hook.chroot` | Enable GameMode daemon |
 | `08-cpu-perf.hook.chroot` | Set CPU governor to performance mode |
 | `10-audio.hook.chroot` | Configure PipeWire low-latency audio |
-| `20-security.hook.chroot` | UFW rules, AppArmor enforcement, SSH hardening |
-| `25-first-boot.hook.chroot` | Enable first-boot wizard service |
+| `20-security.hook.chroot` | Deny-by-default UFW, AppArmor enforcement, security-update timers, remote services off |
+| `25-first-boot.hook.chroot` | Enable shipped first-boot backend/welcome flow without passwordless sudo |
 | `30-plymouth.hook.chroot` | Set Plymouth boot splash theme |
 | `99-zenos-cleanup.hook.chroot` | Remove GNOME (if pulled), fix SDDM autologin, set session |
 
