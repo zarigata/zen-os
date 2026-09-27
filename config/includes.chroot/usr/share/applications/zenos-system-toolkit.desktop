@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=ZEN-OS System Toolkit
-Comment=Disk eraser, backup manager, and package control
-Exec=/usr/local/bin/zenos-system-toolkit
-Icon=zenos-toolkit
+Name=ZEN-OS System Settings
+Comment=Open KDE system configuration through the ZEN-OS control layer
+Exec=/bin/bash /usr/local/lib/zenos/control-center.sh system
+Icon=preferences-system
 Type=Application
 Categories=System;Settings;
 Terminal=false
