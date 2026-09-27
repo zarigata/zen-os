@@ -1,8 +1,14 @@
 #!/bin/bash
-# GameMode setup — daemon activates on-demand via D-Bus, no systemd service needed
+# GameMode activates on demand over D-Bus; verify it really ships.
+set -euo pipefail
 
-# Add live-user to gamemode group (allows non-root users to request gamemode)
-usermod -aG gamemode live-user 2>/dev/null || true
+if id live-user >/dev/null 2>&1 && getent group gamemode >/dev/null 2>&1; then
+    usermod -aG gamemode live-user
+fi
 
-# Verify gamemode binary is present
-which gamemoded || echo "WARNING: gamemoded not found"
+command -v gamemoded >/dev/null 2>&1 || {
+    echo "ERROR: gamemoded is missing from the image" >&2
+    exit 1
+}
+
+echo "ZEN-OS: GameMode verified."
