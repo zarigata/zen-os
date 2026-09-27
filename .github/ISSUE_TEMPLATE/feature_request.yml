@@ -1,0 +1,52 @@
+name: Feature request
+description: Suggest a useful ZEN-OS feature or improvement
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the workflow or user problem, not only the proposed implementation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Explain what you would like ZEN-OS to do.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Desktop / UX
+        - Gaming
+        - Engineering
+        - Development tools
+        - Hardware / drivers
+        - Security
+        - Installer / recovery
+        - Build / CI
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or prior art
+      description: Other distros/tools that solve this well, if any.
+
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contribution
+      options:
+        - label: I may be able to help test this.
+        - label: I may be able to help implement this.
