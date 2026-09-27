@@ -1,10 +1,11 @@
 [Desktop Entry]
 Type=Application
-Name=ZEN-OS First-Boot Wizard
-Comment=Configure hardware, drivers, and applications on first boot
-Exec=/usr/local/bin/zenos-first-boot-gui
-Icon=system-run
+Name=ZEN-OS Welcome
+Comment=Finish privacy, app-store and device-integration setup
+Exec=/bin/bash /usr/local/lib/zenos/first-boot-gui.sh
+Icon=zenos-logo
 Categories=System;Settings;
 OnlyShowIn=KDE;
-NoDisplay=false
+NoDisplay=true
+X-KDE-autostart-after=panel
 X-GNOME-Autostart-enabled=true
