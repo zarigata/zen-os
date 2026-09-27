@@ -35,9 +35,8 @@ jobs:
           for hook in config/hooks/live/*.hook.chroot config/hooks/normal/*.hook.chroot; do
             if [ -L "$hook" ]; then
               TARGET=$(readlink "$hook")
-              # Skip symlinks to live-build system hooks (only exist on build host)
               if [[ "$TARGET" == /usr/share/* ]]; then
-                echo "  SKIP: $(basename $hook) (live-build system hook)"
+                echo "  SKIP: $(basename "$hook") (live-build system hook)"
                 continue
               fi
               if [ ! -f "$hook" ]; then
@@ -45,27 +44,47 @@ jobs:
                 continue
               fi
             fi
-            if [ ! -f "$hook" ]; then
-              continue
-            fi
+            [ -f "$hook" ] || continue
             if ! bash -n "$hook" 2>&1; then
               echo "ERROR: Syntax error in $hook"
               ERRORS=$((ERRORS + 1))
             else
-              echo "  OK: $(basename $hook)"
+              echo "  OK: $(basename "$hook")"
             fi
           done
           exit $ERRORS
 
-      - name: Validate build scripts
+      - name: Validate shell scripts
         run: |
           ERRORS=0
-          for script in scripts/*.sh; do
+          for script in scripts/*.sh config/includes.chroot/usr/local/lib/zenos/*.sh; do
+            [ -f "$script" ] || continue
             if ! bash -n "$script" 2>/dev/null; then
               echo "ERROR: Syntax error in $script"
               ERRORS=$((ERRORS + 1))
             else
-              echo "  OK: $(basename $script)"
+              echo "  OK: $script"
+            fi
+          done
+          exit $ERRORS
+
+      - name: Validate ZEN-OS launch targets
+        run: |
+          ERRORS=0
+          for desktop in config/includes.chroot/usr/share/applications/zenos-*.desktop config/includes.chroot/etc/xdg/autostart/zenos-*.desktop; do
+            [ -f "$desktop" ] || continue
+            target=$(grep -Eo '/usr/local/lib/zenos/[A-Za-z0-9._-]+\.sh' "$desktop" | head -n1 || true)
+            if [ -n "$target" ] && [ ! -f "config/includes.chroot${target}" ]; then
+              echo "ERROR: $desktop references missing $target"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          for unit in config/includes.chroot/etc/systemd/system/zenos-*.service config/includes.chroot/etc/systemd/user/zenos-*.service; do
+            [ -f "$unit" ] || continue
+            target=$(grep -Eo '/usr/local/lib/zenos/[A-Za-z0-9._-]+\.sh' "$unit" | head -n1 || true)
+            if [ -n "$target" ] && [ ! -f "config/includes.chroot${target}" ]; then
+              echo "ERROR: $unit references missing $target"
+              ERRORS=$((ERRORS + 1))
             fi
           done
           exit $ERRORS
@@ -74,16 +93,25 @@ jobs:
         run: |
           ERRORS=0
           for list in config/package-lists/*.list.chroot; do
-            if [ ! -f "$list" ]; then
-              continue
-            fi
-            PKG_COUNT=$(grep -vE '^\s*#|^\s*$' "$list" | wc -l)
+            [ -f "$list" ] || continue
+            PKG_COUNT=$(grep -vE '^[[:space:]]*#|^[[:space:]]*$' "$list" | wc -l)
             if [ "$PKG_COUNT" -eq 0 ]; then
-              echo "WARN: Empty package list: $(basename $list)"
+              echo "WARN: Empty package list: $(basename "$list")"
             else
-              echo "  OK: $(basename $list) ($PKG_COUNT packages)"
+              echo "  OK: $(basename "$list") ($PKG_COUNT packages)"
+            fi
+            DUPES=$(grep -vE '^[[:space:]]*#|^[[:space:]]*$' "$list" | sort | uniq -d || true)
+            if [ -n "$DUPES" ]; then
+              echo "ERROR: Duplicate packages in $list:"
+              echo "$DUPES"
+              ERRORS=$((ERRORS + 1))
             fi
           done
+          if ! grep -qx 'unattended-upgrades' config/package-lists/base.list.chroot; then
+            echo "ERROR: unattended-upgrades must be present in the base image"
+            ERRORS=$((ERRORS + 1))
+          fi
+          exit $ERRORS
 
       - name: Check os-release fields
         run: |
@@ -108,7 +136,6 @@ jobs:
       - name: Check for hardcoded paths or personal info
         run: |
           ERRORS=0
-          # Check for absolute paths that reference specific machines
           grep -rn '/home/[a-z]' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null | grep -v '/home/live-user' | grep -v '#.*home' && ERRORS=$((ERRORS+1)) || true
           grep -rn '/mnt/' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null && ERRORS=$((ERRORS+1)) || true
           grep -rn '/Users/' --include='*.sh' --include='*.py' --include='*.json' --include='*.expect' . 2>/dev/null && ERRORS=$((ERRORS+1)) || true

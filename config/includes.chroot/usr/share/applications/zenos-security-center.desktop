@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ZEN-OS Security Center
+Comment=Review firewall, AppArmor, updates and opt-in network services
+Exec=konsole -e /bin/bash /usr/local/lib/zenos/security.sh menu
+Icon=security-high
+Type=Application
+Categories=System;Security;Settings;
+Terminal=false
+X-KDE-StartupNotify=true

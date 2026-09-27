@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=ZEN-OS Performance
-Comment=Switch between Gaming, Balanced, and Battery profiles
-Exec=konsole -e /usr/local/bin/zenos-performance
-Icon=zenos-performance
+Comment=Switch between supported performance, balanced and power-saver profiles
+Exec=/bin/bash /usr/local/lib/zenos/control-center.sh performance
+Icon=preferences-system-performance
 Type=Application
 Categories=System;Settings;
 Terminal=false

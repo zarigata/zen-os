@@ -1,62 +1,44 @@
 #!/bin/bash
-# Security setup hook — UFW, AppArmor, unattended-upgrades
-set -e
+# Security setup hook — secure-by-default desktop profile
+set -euo pipefail
 
-echo "ZEN-OS: Configuring security..."
+echo "ZEN-OS: Configuring secure desktop defaults..."
 
 # === UFW Firewall ===
-# Set default policies
-ufw default deny incoming 2>/dev/null || true
-ufw default allow outgoing 2>/dev/null || true
+# Desktop default: no unsolicited inbound access. Features such as SSH,
+# KDE Connect and Samba are opt-in through the ZEN-OS Security Center.
+ufw --force reset >/dev/null 2>&1 || true
+ufw default deny incoming >/dev/null 2>&1 || true
+ufw default allow outgoing >/dev/null 2>&1 || true
+ufw default deny routed >/dev/null 2>&1 || true
+ufw logging low >/dev/null 2>&1 || true
+ufw --force enable >/dev/null 2>&1 || true
 
-# Allow SSH (rate limited — prevents brute force)
-ufw limit in ssh/tcp 2>/dev/null || true
+# OpenSSH is installed for developers but must not listen until explicitly enabled.
+systemctl disable ssh.service 2>/dev/null || true
+systemctl disable ssh.socket 2>/dev/null || true
 
-# Allow KDE Connect (common use case for gaming desktop)
-ufw allow 1714:1764/udp 2>/dev/null || true
-ufw allow 1714:1764/tcp 2>/dev/null || true
-
-# Allow Samba (file sharing)
-ufw allow samba 2>/dev/null || true
-
-# Enable firewall (must be last — blocks everything not explicitly allowed)
-ufw --force enable 2>/dev/null || true
-
-echo "ZEN-OS: UFW firewall configured (deny incoming, allow outgoing)"
+echo "ZEN-OS: Firewall enabled; inbound services are opt-in"
 
 # === AppArmor ===
-# Already enabled via kernel params (apparmor=1 security=apparmor)
-# Ensure profiles are in enforce mode
-if command -v aa-enforce &>/dev/null; then
+if command -v aa-enforce >/dev/null 2>&1; then
     aa-enforce /etc/apparmor.d/* 2>/dev/null || true
 fi
-
-# Cache profiles for faster boot
-if command -v aa-cache &>/dev/null; then
-    aa-cache --all 2>/dev/null || true
+if command -v apparmor_parser >/dev/null 2>&1; then
+    apparmor_parser -r /etc/apparmor.d/* 2>/dev/null || true
 fi
+systemctl enable apparmor.service 2>/dev/null || true
 
-echo "ZEN-OS: AppArmor profiles enforced"
-
-# === Unattended Upgrades ===
-# Enable periodic security updates
-if [ -f /etc/apt/apt.conf.d/50zenos-unattended-upgrades ]; then
-    cat > /etc/apt/apt.conf.d/20auto-upgrades << EOF
+# === Automatic security updates ===
+cat > /etc/apt/apt.conf.d/20auto-upgrades << 'EOF'
 APT::Periodic::Update-Package-Lists "1";
 APT::Periodic::Unattended-Upgrade "1";
 APT::Periodic::Download-Upgradeable-Packages "1";
 APT::Periodic::AutocleanInterval "7";
 EOF
-fi
+systemctl enable apt-daily.timer apt-daily-upgrade.timer 2>/dev/null || true
 
-echo "ZEN-OS: Unattended security upgrades enabled"
-
-# === SSH hardening ===
-# Generate fresh host keys (not the build-time ones)
-rm -f /etc/ssh/ssh_host_*_key* 2>/dev/null || true
-ssh-keygen -A 2>/dev/null || true
-
-# Disable root password
+# Root login remains locked. Administrative work goes through sudo/polkit.
 passwd -l root 2>/dev/null || true
 
 echo "ZEN-OS: Security configuration complete"

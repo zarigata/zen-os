@@ -1,21 +1,15 @@
 #!/bin/bash
-# Enable first-boot wizard systemd service
-set -e
+# Enable ZEN-OS first-boot setup without passwordless sudo exceptions.
+set -euo pipefail
 
-# Enable the first-boot service
+mkdir -p /var/lib/zenos
+chmod 755 /usr/local/lib/zenos/*.sh 2>/dev/null || true
+
+# Root backend runs once after installation/first boot.
 systemctl enable zenos-first-boot.service 2>/dev/null || true
 
-# Create marker directory
-mkdir -p /var/lib/zenos
+# The graphical welcome is launched by XDG autostart in the user's KDE session.
+# Privileged choices are handled through polkit (pkexec), not NOPASSWD sudo.
+rm -f /etc/sudoers.d/zenos-first-boot 2>/dev/null || true
 
-# Allow live-user to run wizard scripts without password
-cat > /etc/sudoers.d/zenos-first-boot << EOF
-# ZEN-OS first-boot wizard — allow live-user to run setup scripts
-live-user ALL=(root) NOPASSWD: /usr/local/bin/zenos-first-boot
-live-user ALL=(root) NOPASSWD: /usr/local/bin/zenos-nvidia-install
-live-user ALL=(root) NOPASSWD: /usr/local/bin/zenos-hardware-detect
-live-user ALL=(root) NOPASSWD: /usr/local/bin/zenos-flatpak-selector
-EOF
-chmod 440 /etc/sudoers.d/zenos-first-boot 2>/dev/null || true
-
-echo "ZEN-OS: First-boot wizard enabled"
+echo "ZEN-OS: First-boot setup enabled"

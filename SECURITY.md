@@ -1,79 +1,46 @@
 # Security Policy
 
-## Supported Versions
+## Supported Builds
 
-| Version | Supported |
-| ------- | ---------- |
-| v1.0.x | Yes |
-| Development builds | Best effort |
+| Build | Support |
+| --- | --- |
+| Latest release | Security fixes and best-effort support |
+| Development branch | Best effort |
+| Old ISOs | Update or rebuild before reporting package vulnerabilities |
 
-## Security Architecture
+ZEN-OS follows Debian Trixie security updates. Users should keep automatic security updates enabled and periodically install normal package updates as well.
 
-ZEN-OS implements a pragmatic security posture:
+## Default Security Model
 
-- **AppArmor**: Enabled with enforced profiles for system services
-- **UFW Firewall**: Default deny incoming, allow outgoing. SSH rate-limited.
-- **Unattended Upgrades**: Automatic security updates from Debian security
-- **SSH Hardening**: Root login disabled, host keys regenerated on first boot
-- **Kernel Hardening**: `kptr_restrict`, `dmesg_restrict`, SYN cookies enabled
-- **Secure Boot**: Optional — MOK enrollment wizard available post-install
+ZEN-OS aims for secure desktop defaults without breaking gaming, Flatpak, browsers or engineering tools:
+
+- **UFW** is enabled with **deny incoming / allow outgoing**.
+- **SSH is installed but disabled by default**. When enabled through ZEN-OS Security Center it uses key-only authentication and a rate-limited firewall rule.
+- **KDE Connect inbound ports are opt-in** instead of being exposed on every installation.
+- **AppArmor** is enabled and its installed profiles are enforced where available.
+- **Automatic Debian security updates** are enabled with `unattended-upgrades`.
+- **Debian fallback-kernel security updates are allowed**; only the separately pinned Liquorix packages are excluded from unattended replacement.
+- **Root login is locked**; administrative actions use sudo or polkit.
+- Kernel/network hardening includes ASLR, restricted kernel pointers and dmesg, SYN cookies, redirect/source-route rejection, protected links/FIFOs and conservative ptrace restrictions.
+- NetworkManager uses randomized Wi-Fi scan addresses and stable per-network Wi-Fi MAC addresses by default.
+
+These are desktop defaults, not a claim that ZEN-OS is a hardened server distribution.
 
 ## Reporting a Vulnerability
 
-**Do not report security vulnerabilities through public GitHub issues.**
+Please do **not** publish exploitable security details in a normal GitHub issue.
 
-Instead, please report them via:
+Use GitHub's private vulnerability reporting / Security Advisory flow for this repository:
 
-1. **GitHub Security Advisories** (preferred): [Report a vulnerability](https://github.com/zen-os/zen-os/security/advisories/new)
-2. **Email**: security@zen-os.org
+https://github.com/zarigata/zen-os/security/advisories/new
 
-### What to Include
+Include the affected ZEN-OS version or commit, component, reproduction steps, impact, and any proposed mitigation. For ordinary non-sensitive bugs, use the public issue tracker.
 
-- Type of vulnerability (privilege escalation, information disclosure, etc.)
-- Affected component (kernel, package, configuration, script)
-- Step-by-step reproduction instructions
-- Potential impact
-- Suggested fix (if available)
+## Security-Sensitive Trade-offs
 
-### Response Timeline
+- Steam, Wine/Proton, Docker/Podman, virtualization and development tooling intentionally increase attack surface compared with a minimal desktop.
+- Flatpak is available, but individual application sandbox permissions still matter.
+- Liquorix is a third-party performance kernel and is updated deliberately by the ZEN-OS build rather than silently replaced by unattended upgrades.
+- Remote access and local-network integration are opt-in because convenience services should not open inbound ports automatically.
 
-- **Acknowledgment**: Within 48 hours
-- **Initial assessment**: Within 7 days
-- **Fix or mitigation**: Depends on severity
-  - Critical: Priority patch
-  - High: Next build cycle
-  - Medium/Low: Scheduled fix
-
-### Responsible Disclosure
-
-We ask that you:
-
-1. Give us reasonable time to address the vulnerability before public disclosure
-2. Avoid accessing or modifying other users' data
-3. Act in good faith to protect users' privacy and security
-
-We commit to:
-
-1. Acknowledging your report promptly
-2. Keeping you informed of our progress
-3. Crediting you in the fix announcement (unless you prefer anonymity)
-
-## Security Configuration
-
-### What's Hardened
-
-- Root account locked, user gets sudo
-- UFW deny-all incoming by default
-- SSH: no root login, rate-limited authentication
-- AppArmor profiles for Steam, Wine, Docker, PipeWire
-- Kernel pointer restriction, dmesg restriction
-- Core dumps disabled
-
-### What's Intentionally Relaxed
-
-- Live user has no password (by design — live session)
-- Flatpak is available (sandboxed, but broad access)
-- Docker group membership (required for development use case)
-- Secure Boot disabled by default (gaming kernel compatibility)
-
-These trade-offs are deliberate for a gaming/engineering desktop. If you're using ZEN-OS in a security-sensitive environment, review and tighten these defaults.
+Run **ZEN-OS Security Center** from the application menu to review the current firewall/AppArmor/update state and explicitly enable or disable supported network features.

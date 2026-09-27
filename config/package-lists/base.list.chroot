@@ -16,6 +16,7 @@ network-manager
 apparmor
 apparmor-utils
 ufw
+unattended-upgrades
 plymouth
 plymouth-themes
 fonts-dejavu
@@ -51,7 +52,6 @@ cryptsetup
 lvm2
 mdadm
 smartmontools
-nvme-cli
 nvme-cli
 flatpak
 zstd

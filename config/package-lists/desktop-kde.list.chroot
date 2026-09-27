@@ -1,4 +1,4 @@
-## KDE Plasma Desktop — ZEN-OS v1.0 primary desktop
+## KDE Plasma Desktop — ZEN-OS primary desktop
 plasma-desktop
 plasma-workspace
 sddm
@@ -48,3 +48,15 @@ papirus-icon-theme
 kwin-x11
 kwin-wayland
 xinit
+
+## Daily-driver essentials
+firefox-esr
+kdeconnect
+bluez
+bluez-obexd
+bluedevil
+power-profiles-daemon
+xdg-desktop-portal
+xdg-desktop-portal-kde
+print-manager
+cups
