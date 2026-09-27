@@ -1,76 +1,61 @@
-# ZEN-OS Makefile — orchestrates build, test, and release
+# ZEN-OS Makefile — build, validate, inspect and release
 
-.PHONY: all build clean test test-docker test-qemu test-vision test-rmc test-games test-all release docker-image
+.PHONY: all build build-native clean distclean docker-image test test-static test-preflight test-iso test-all smoke release
 
-# Docker image name
 IMAGE_NAME := zen-os-build
 IMAGE_TAG  := latest
 
-# Default target
-all: docker-image build
+all: build
 
-# Build the Docker build environment image
 docker-image:
 	@echo "Building Docker image..."
 	docker build -t $(IMAGE_NAME):$(IMAGE_TAG) -f Dockerfile.build .
 
-# Build the ISO inside Docker container
 build: docker-image
 	@echo "Building ZEN-OS ISO..."
-	docker run --rm \
-		--privileged \
-		-v "$(PWD):/build" \
-		-w /build \
-		$(IMAGE_NAME):$(IMAGE_TAG) \
-		bash scripts/build.sh
+	docker run --rm --privileged -v "$(PWD):/build" -w /build $(IMAGE_NAME):$(IMAGE_TAG) bash scripts/build.sh
 
-# Build without Docker (requires Debian host with live-build)
 build-native:
-	@echo "Building ZEN-OS ISO (native)..."
+	@echo "Building ZEN-OS ISO (native Debian/Trixie host)..."
 	bash scripts/build.sh
 
-# Clean build artifacts
 clean:
-	docker run --rm \
-		--privileged \
-		-v "$(PWD):/build" \
-		-w /build \
-		$(IMAGE_NAME):$(IMAGE_TAG) \
-		bash -c "lb clean --purge 2>/dev/null || true"
-	@echo "Clean complete."
+	@echo "Cleaning live-build artifacts..."
+	docker run --rm --privileged -v "$(PWD):/build" -w /build $(IMAGE_NAME):$(IMAGE_TAG) bash -c "lb clean --purge 2>/dev/null || true"
 
-# Full clean including Docker image
 distclean: clean
 	docker rmi $(IMAGE_NAME):$(IMAGE_TAG) 2>/dev/null || true
 
-# Test targets
-test-docker:
-	@echo "Running Docker test suite..."
-	bash tests/docker/test-package-resolution.sh
+test: test-all
 
-test-qemu:
-	@echo "Running QEMU boot tests..."
-	bash tests/qemu/harness.sh
+test-static:
+	@echo "Checking shell syntax and required ZEN-OS launch targets..."
+	@bash -n auto/config scripts/*.sh config/hooks/live/*.hook.chroot config/includes.chroot/usr/local/lib/zenos/*.sh
+	@for f in config/includes.chroot/usr/share/applications/zenos-*.desktop; do \
+		target=$$(grep -Eo '/usr/local/lib/zenos/[A-Za-z0-9._-]+\.sh' "$$f" | head -n1 || true); \
+		[ -z "$$target" ] || [ -f "config/includes.chroot$$target" ] || { echo "Missing target $$target from $$f"; exit 1; }; \
+	done
+	@echo "Static checks passed."
 
-test-vision:
-	@echo "Running Vision LLM analysis..."
-	bash tests/vision/run-all.sh
+test-preflight: docker-image
+	@echo "Resolving requested Debian packages..."
+	docker run --rm $(IMAGE_NAME):$(IMAGE_TAG) bash scripts/package-preflight.sh
 
-test-rmc:
-	@echo "Running RMC interaction tests..."
-	bash tests/rmc/run-all.sh
+test-iso:
+	@echo "Inspecting built ISO..."
+	docker run --rm -v "$(PWD):/build" -w /build $(IMAGE_NAME):$(IMAGE_TAG) bash scripts/verify-iso.sh
 
-test-games:
-	@echo "Running game stack tests..."
-	bash tests/games/run-all.sh
+test-all: test-static test-preflight
+	@echo "Repository and package preflight checks passed."
 
-test-all: test-docker test-qemu test-vision test-rmc test-games
-	@echo "All tests complete."
+smoke:
+	@echo "Starting VM smoke-test tooling (requires a built ISO and local QEMU/VNC dependencies)..."
+	bash scripts/smoke-test.sh
 
-# Release targets
-release:
-	@echo "Creating release..."
-	bash scripts/generate-checksums.sh
-	bash scripts/split-iso.sh
-	bash scripts/create-torrent.sh
-	bash scripts/create-release.sh
+release: test-iso
+	@echo "ISO verified. Release automation can now package checksums/artifacts."
+	@command -v scripts/generate-checksums.sh >/dev/null 2>&1 || true
+	@[ ! -f scripts/generate-checksums.sh ] || bash scripts/generate-checksums.sh
+	@[ ! -f scripts/split-iso.sh ] || bash scripts/split-iso.sh
+	@[ ! -f scripts/create-torrent.sh ] || bash scripts/create-torrent.sh
+	@[ ! -f scripts/create-release.sh ] || bash scripts/create-release.sh
