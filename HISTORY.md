@@ -1,6 +1,46 @@
 # ZEN-OS — Development History
 
-A chronological record of ZEN-OS development, from initial concept to current state.
+A chronological record of major project changes.
+
+---
+
+## Current development — September 2026
+
+The post-alpha tree received a release-readiness and daily-driver hardening pass.
+
+### Kernel/build reliability
+
+- Liquorix pin moved to **7.2.7-1 / 7.2-12.2~trixie** after the older package set disappeared from the expected Trixie path.
+- Kernel fetching now removes stale Liquorix .deb files and fails immediately when required downloads fail.
+- CI now validates the requested Debian package set with a combined dependency-resolution simulation.
+- A deep static ISO verifier checks the boot payload, squashfs and shipped ZEN-OS tools.
+- A dedicated full-ISO GitHub Actions workflow builds and inspects images after relevant main-branch changes and on a weekly schedule.
+
+### Security
+
+- UFW now defaults to deny inbound without automatically exposing SSH/KDE Connect.
+- SSH is off by default and configured for key-only authentication when enabled.
+- AppArmor and Debian automatic security-update timers are explicitly enabled.
+- Debian fallback-kernel security updates are no longer blocked by the Liquorix-specific pin.
+- Passwordless first-boot sudo exceptions were removed.
+- NetworkManager Wi-Fi privacy defaults were added.
+
+### Daily-driver features
+
+- Firefox ESR, Bluetooth UI, KDE Connect, printing, desktop portals and power profiles were added to the intended desktop set.
+- ZEN-OS Control Center launchers were repaired so they point at scripts that actually ship in the filesystem.
+- **ZEN-OS Doctor** was added for system, Vulkan/gaming, firmware, service and package-health diagnostics.
+- **ZEN-OS Update Center** was added for Debian, Flatpak and firmware maintenance.
+- Security Center remains the explicit place to enable inbound SSH/KDE Connect access.
+
+### Documentation/release clarity
+
+- README, BUILD guide, contributor guide, user guide and website were rewritten around verified capabilities.
+- Stale claims about unshipped tools were removed.
+- Project status now clearly distinguishes repository/CI validation from VM and physical-hardware validation.
+- A release-readiness roadmap and structured GitHub issue forms were added.
+
+> The June 2026 alpha history below is retained as a record of what was true for that snapshot. It should not be read as the current feature/version matrix.
 
 ---
 
