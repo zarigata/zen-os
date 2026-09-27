@@ -1,12 +1,11 @@
 [Unit]
-Description=ZEN-OS First-Boot Backend Setup
-After=network-online.target
-Wants=network-online.target
+Description=ZEN-OS First-Boot Security Finalizer
+After=multi-user.target
 ConditionPathExists=!/var/lib/zenos/.first-boot-backend-done
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/zenos-first-boot
+ExecStart=/bin/bash /usr/local/lib/zenos/first-boot.sh
 RemainAfterExit=yes
 StandardOutput=journal
 StandardError=journal
