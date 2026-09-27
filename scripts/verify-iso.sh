@@ -39,8 +39,11 @@ echo
 echo "[2/4] Inspecting package manifest when present..."
 manifest="$tmp/filesystem.packages"
 if xorriso -osirrox on -indev "$ISO" -extract /live/filesystem.packages "$manifest" >/dev/null 2>&1 && [ -s "$manifest" ]; then
-  for pkg in plasma-desktop firefox-esr network-manager ufw apparmor flatpak wine; do
-    grep -Eq "^${pkg}([[:space:]]|:)" "$manifest" || echo "WARN: package manifest does not list $pkg"
+  for pkg in plasma-desktop firefox-esr network-manager ufw apparmor flatpak steam-installer wine gamemode mangohud dxvk freecad kicad openscad octave jupyter-notebook docker.io podman fwupd; do
+    grep -Eq "^${pkg}([[:space:]]|:)" "$manifest" || {
+      echo "ERROR: package manifest does not list required package: $pkg"
+      exit 1
+    }
   done
   echo "  Package manifest: inspected"
 else
@@ -66,14 +69,14 @@ done
 
 # Pull the dpkg status database directly from squashfs without unpacking the full rootfs.
 if unsquashfs -cat "$tmp/filesystem.squashfs" var/lib/dpkg/status > "$tmp/dpkg-status" 2>/dev/null; then
-  for pkg in plasma-desktop firefox-esr network-manager ufw apparmor flatpak; do
+  for pkg in plasma-desktop firefox-esr network-manager ufw apparmor flatpak steam-installer wine wine32 gamemode mangohud dxvk freecad kicad openscad octave jupyter-notebook docker.io podman fwupd; do
     awk -v pkg="$pkg" '
       BEGIN { RS=""; FS="\n"; found=0 }
       $0 ~ ("Package: " pkg "($|\n)") && $0 ~ /Status: install ok installed/ { found=1 }
       END { exit found ? 0 : 1 }
     ' "$tmp/dpkg-status" || { echo "ERROR: $pkg is not recorded as installed in squashfs"; exit 1; }
   done
-  echo "  dpkg installed-state checks: OK"
+  echo "  Desktop, gaming, engineering, developer and firmware package checks: OK"
 fi
 
 echo "  ZEN-OS tools and identity: OK"
