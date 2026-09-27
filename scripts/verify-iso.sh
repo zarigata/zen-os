@@ -51,5 +51,7 @@ xorriso -osirrox on -indev "$ISO" -extract /live/filesystem.squashfs "$SQUASH" >
     || fail "unable to extract live filesystem"
 unsquashfs -ll "$SQUASH" 2>/dev/null | grep -q 'usr/share/applications/calamares-install-debian.desktop' \
     || fail "Calamares desktop installer is missing"
+unsquashfs -ll "$SQUASH" 2>/dev/null | grep -q 'usr/share/applications/zenos-installer.desktop' \
+    || fail "ZEN-OS installer launcher is missing"
 
 echo "ZEN-OS: ISO verification passed."
