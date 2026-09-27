@@ -1,0 +1,90 @@
+name: Bug report
+description: Report a reproducible ZEN-OS problem
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing ZEN-OS. Please include enough detail to reproduce the problem.
+        Remove passwords, tokens, private keys and other secrets from logs/reports.
+
+  - type: input
+    id: version
+    attributes:
+      label: ZEN-OS version / Git commit
+      description: Release tag or commit SHA used to build the image.
+      placeholder: v1.0.0-alpha or abc1234
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Live USB / live ISO
+        - Installed system
+        - QEMU / VM
+        - Build process
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: hardware
+    attributes:
+      label: Hardware
+      description: CPU, GPU, RAM, motherboard/laptop model, Wi-Fi adapter if relevant.
+      placeholder: Ryzen 7 5800X, Radeon RX 6800, 32 GB RAM...
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the actual behavior and any exact error text.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Boot...
+        2. Open...
+        3. Run...
+    validations:
+      required: true
+
+  - type: textarea
+    id: doctor
+    attributes:
+      label: ZEN-OS Doctor report
+      description: Run /usr/local/lib/zenos/doctor.sh report and paste the relevant output. Review it before posting.
+      render: shell
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: journalctl, dmesg, build output, screenshots, etc.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: I removed secrets/private information from the report and logs.
+          required: true
+        - label: I checked existing issues for the same problem.
+          required: true
